@@ -1,0 +1,12 @@
+RNS — RiseChain Name Service
+
+This project is a phased fork of ENS (Ethereum Name Service) contracts.
+
+Fork source: ensdomains/ens-contracts v1.7.0
+Original license: MIT — Copyright (c) True Names Limited
+See LICENSE for the full MIT license text.
+
+The generic utility libraries under contracts/utils/ are copied verbatim
+from ens-contracts v1.7.0. ENS SPDX/license headers are preserved intact
+on every ported file. Domain contracts (Phases 2+) are re-created, not
+copied, per the project specification.

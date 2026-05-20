@@ -1,2 +1,18 @@
 # GSD planning docs — kept local-only (commit_docs: false)
 .planning/
+
+# Dependencies
+node_modules
+
+# Hardhat build output
+artifacts
+cache
+build
+generated
+
+# Read-only external reference (has an embedded .git — never track it)
+reference/
+
+# Env
+.env
+*.DS_Store
