@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleDetection": "force",
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "NodeNext",
+    "outDir": "build",
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "types": ["vitest/globals"]
+  },
+  "include": ["./test/**/*.ts", "./hardhat.config.ts"],
+  "files": ["hardhat.config.ts"]
+}

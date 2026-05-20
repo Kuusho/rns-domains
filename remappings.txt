@@ -1,0 +1,2 @@
+@openzeppelin/contracts-v5/=node_modules/@openzeppelin/contracts-v5/
+@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/
