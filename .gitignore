@@ -11,8 +11,14 @@ build
 generated
 
 # NOTE: `deployments/` is intentionally NOT gitignored — it is persisted
-# rocketh deploy state (per-network artifacts). Do not add a `deployments`
-# rule here.
+# rocketh deploy state for REAL networks (e.g. `deployments/riseTestnet/`).
+# Do not add a blanket `deployments` rule here.
+#
+# `deployments/localhost/` is the ONE exception: it is regenerated on every
+# `bun run deploy:local` against a throwaway in-memory Hardhat node, so its
+# addresses are ephemeral and not meaningful to commit. `TestLocalDeploy.test.ts`
+# reads it fresh after a local deploy; it is not persisted deploy state.
+deployments/localhost/
 
 # Read-only external reference (has an embedded .git — never track it)
 reference/

@@ -1,5 +1,5 @@
 import { artifacts, deployScript } from '@rocketh'
-import { zeroHash } from 'viem'
+import { getAddress, zeroHash, type Address } from 'viem'
 
 // Re-created from reference/ens-contracts/deploy/root/00_setup_root.ts,
 // re-implemented as a LINEAR script (RESEARCH O-2 / Pitfall 3): the reference's
@@ -26,11 +26,14 @@ export default deployScript(
 
     // 1. Hand root node 0x0 to the RNSRoot contract. The deployer can sign this
     //    because the RNSRegistry constructor seated the deployer as 0x0 owner.
+    //    Addresses are normalised via getAddress() before comparison — `read`
+    //    returns a lowercase address while artifact/account addresses may be
+    //    checksummed, so a raw `!==` would never match and break idempotency.
     const rootNodeOwner = await read(registry, {
       functionName: 'owner',
       args: [zeroHash],
-    })
-    if (rootNodeOwner !== root.address) {
+    }).then((v) => getAddress(v as Address))
+    if (rootNodeOwner !== getAddress(root.address)) {
       console.log('  - Setting owner of root node 0x0 to the RNSRoot contract')
       await write(registry, {
         functionName: 'setOwner',
@@ -73,8 +76,8 @@ export default deployScript(
     const currentRootOwner = await read(root, {
       functionName: 'owner',
       args: [],
-    })
-    if (currentRootOwner !== owner) {
+    }).then((v) => getAddress(v as Address))
+    if (currentRootOwner !== getAddress(owner)) {
       console.log(`  - Transferring ownership of RNSRoot to ${owner}`)
       await write(root, {
         functionName: 'transferOwnership',
