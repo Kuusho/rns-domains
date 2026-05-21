@@ -10,6 +10,10 @@ cache
 build
 generated
 
+# NOTE: `deployments/` is intentionally NOT gitignored — it is persisted
+# rocketh deploy state (per-network artifacts). Do not add a `deployments`
+# rule here.
+
 # Read-only external reference (has an embedded .git — never track it)
 reference/
 

@@ -6,19 +6,26 @@
   "private": true,
   "scripts": {
     "compile": "hardhat compile",
-    "test": "bun run compile && NODE_OPTIONS=\"--disable-warning=ExperimentalWarning\" vitest run"
+    "test": "bun run compile && NODE_OPTIONS=\"--disable-warning=ExperimentalWarning\" vitest run",
+    "deploy:local": "hardhat deploy --network localhost --skip-prompts"
   },
   "devDependencies": {
     "@ensdomains/hardhat-chai-matchers-viem": "^0.1.14",
+    "@nomicfoundation/hardhat-keystore": "^3.0.0",
     "@nomicfoundation/hardhat-network-helpers": "^3.0.0",
     "@nomicfoundation/hardhat-viem": "^3.0.0",
+    "@rocketh/deploy": "0.14.0",
+    "@rocketh/read-execute": "0.14.0",
+    "@rocketh/viem": "0.14.0",
     "@types/node": "^18.0.0",
     "abitype": "^1.0.8",
     "chai": "^5.1.1",
     "dotenv": "^16.4.5",
     "hardhat": "3.1.4",
+    "hardhat-deploy": "^2.0.0-next.35",
     "prettier": "^2.6.2",
     "prettier-plugin-solidity": "^1.0.0-beta.24",
+    "rocketh": "0.14.5",
     "typescript": "5.9.2",
     "viem": "2.33.3",
     "vitest": "^3.2.3"

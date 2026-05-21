@@ -10,8 +10,11 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "paths": {
+      "@rocketh": ["./rocketh.ts"]
+    }
   },
-  "include": ["./test/**/*.ts", "./hardhat.config.ts"],
+  "include": ["./test/**/*.ts", "./deploy/**/*.ts", "./hardhat.config.ts"],
   "files": ["hardhat.config.ts"]
 }
