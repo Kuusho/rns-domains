@@ -45,15 +45,15 @@ const config = {
       '@openzeppelin/contracts/utils/introspection/IERC165.sol',
     ],
   },
-  // `hardhat compile` emits the typed-artifacts the deploy scripts import via
-  // `rocketh.ts`. hardhat-deploy v2.0.x writes each destination to
-  // `<folder>/artifacts/index.{js,ts}` — so folder `./generated` produces
-  // `./generated/artifacts/index.js` + `.ts`, which `rocketh.ts` imports.
+  // `hardhat compile` emits the typed-artifacts file the deploy scripts import
+  // via `rocketh.ts` (`import artifacts from './generated/artifacts.js'`).
+  // hardhat-deploy@2.0.0-next.35 writes the `js`/`ts` destinations to those
+  // literal paths with a default export — matching the reference config.
   generateTypedArtifacts: {
-    destinations: [
-      { mode: 'javascript', folder: './generated' },
-      { mode: 'typescript', folder: './generated' },
-    ],
+    destinations: {
+      js: ['./generated/artifacts.js'],
+      ts: ['./generated/artifacts.ts'],
+    },
   },
   paths: { sources: { solidity: ['./contracts'] } },
   plugins: [
