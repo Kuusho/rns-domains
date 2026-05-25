@@ -21,11 +21,16 @@ export const config = {
     },
     owner: {
       default: 1,
-      // RiseChain testnet (chainId 11155931): an EOA owner address supplied at
-      // execution time — see Plan 04 / O-3. Per the O-1 resolution, the smoke
-      // deploy uses an EOA owner (Safe is unsupported on chain 11155931); the
-      // production multisig is wired at the MVP phase.
-      11155931: '0x0000000000000000000000000000000000000000', // supplied at execution time — see Plan 04 / O-3
+      // RiseChain testnet (chainId 11155931): EOA owner resolved at Plan 04
+      // execution time (O-3). Per the O-1 resolution, the smoke deploy uses an
+      // EOA owner (Safe is unsupported on chain 11155931); the production
+      // multisig is wired at the MVP phase. The address below is also the
+      // deployer EOA for this smoke deploy — D-14's distinct-account gate is
+      // exercised by the LOCAL Plan 03 deploy (which uses distinct Hardhat
+      // accounts); on testnet, deployer == owner is acceptable per Plan 04 §
+      // objective (the smoke deploy is a deploy-path exercise, not the D-14
+      // authoritative gate).
+      11155931: '0xFe8ED71EB54A95b7F35737aA9F34114E361e6Ad1',
     },
   },
   networks: {
