@@ -33,10 +33,15 @@
 //     1. process.env[KEY] if present and non-empty AND it passes a value-
 //        shape gate (URL for RPC; 0x + 64 hex chars for DEPLOYER_KEY). Used
 //        directly — the keystore is skipped entirely.
-//     2. Otherwise `bunx hardhat keystore get <KEY>` is tried; the captured
+//     2. Otherwise `npx hardhat keystore get <KEY>` is tried; the captured
 //        stdout is only used if exit code == 0 AND it passes the same value-
 //        shape gate (this rejects the "No production keystore found..."
 //        error message hardhat prints to stdout on a missing store).
+//        Note: this MUST be `npx` (Node) not `bunx` (Bun) — hardhat-keystore@3
+//        resolves the encrypted store via Node-specific path APIs, and on some
+//        systems Bun's runtime resolves to a different config directory, so
+//        a store written via `npx hardhat keystore set` is invisible to
+//        `bunx hardhat keystore get`. Stick with `npx` end-to-end.
 //     3. Otherwise a clear error names the variable, both attempted sources,
 //        and the two recovery paths (`hardhat keystore set KEY` in a real
 //        TTY, or inline-export the env var before invoking this script).
@@ -158,18 +163,28 @@ function tryEnv(envKey: string, kind: ValueShape): string | null {
 }
 
 function tryKeystore(envKey: string, kind: ValueShape): string | null {
-  // `bunx hardhat keystore get <KEY>` — capture BOTH stdout and exit code.
+  // `npx hardhat keystore get <KEY>` — capture BOTH stdout and exit code.
   // If exit code != 0, the keystore is unavailable (missing store, missing
   // key, decryption failure, etc.). If exit code == 0 but the stdout payload
   // doesn't shape-validate (e.g. "No production keystore found..."), treat
   // it as unavailable too.
+  //
+  // We deliberately invoke via `npx` rather than `bunx`: hardhat-keystore@3
+  // resolves the encrypted store via Node-specific path APIs, and on some
+  // systems `bunx` (Bun's runtime) resolves to a different config directory
+  // than `npx` (Node), so a keystore created with `npx hardhat keystore set`
+  // is invisible to `bunx hardhat keystore get`. Stick with `npx` so reads
+  // see the same store writes went into. To keep this prompt-friendly the
+  // subprocess inherits the parent's stdin/stderr — that lets the keystore
+  // password prompt reach the user's TTY when the script is run interactively.
   let result
   try {
-    result = spawnSync('bunx', ['hardhat', 'keystore', 'get', envKey], {
+    result = spawnSync('npx', ['hardhat', 'keystore', 'get', envKey], {
       encoding: 'utf-8',
-      // Don't inherit stdio — we want to inspect stdout, and we don't want
-      // hardhat's prompts to spray into our own output.
-      stdio: ['ignore', 'pipe', 'pipe'],
+      // stdin inherited so the keystore unlock prompt reaches the user's TTY.
+      // stdout captured so we can shape-validate the returned value.
+      // stderr inherited so any keystore-side warning is visible.
+      stdio: ['inherit', 'pipe', 'inherit'],
     })
   } catch {
     return null
@@ -199,7 +214,7 @@ function resolveConfigValue(envKey: string, kind: ValueShape): string {
     `  (no usable encrypted store at ~/.config/hardhat-nodejs/keystore.json — run`,
   )
   console.error(
-    `   \`bunx hardhat keystore set ${envKey}\` in a real TTY, or export`,
+    `   \`npx hardhat keystore set ${envKey}\` in a real TTY, or export`,
   )
   console.error(`   ${envKey} inline before invoking this script)`)
   process.exit(1)
