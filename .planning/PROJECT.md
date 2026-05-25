@@ -27,14 +27,14 @@ service must work.
 
 <!-- Shipped and confirmed valuable. -->
 
-(None yet — greenfield; ship to validate)
+- [x] Repo scaffold — Hardhat 3 + Bun project; shared utility libraries (`NameCoder`, `BytesUtils`, `HexUtils`, `StringUtils`, `ENSIP19`); per-phase interface-porting policy; Vitest + viem test harness — *Validated in Phase 1: Repo Scaffold & Shared Libraries (`bun run compile` clean, 350/350 utility tests pass)*
+- [x] Naming layer — `RNSRegistry` + `RNS` (frozen interface) + `RNSControllable` + `RNSRoot` + `RNSRootSecurityController`; root-node ownership wired to `RNSRoot`; `rocketh` deploy harness; testnet smoke deploy live — *Validated in Phase 2: Naming Layer Foundation (372/372 local conformance suite passes + on-chain D-05 smoke deploy on RISE testnet chainId 11155931, contracts at `0x1E413C…fdEDcAB` / `0x9709C4…6685` / `0x8a3578…aAaCA`; `Registry.owner(0x0) == RNSRoot` and `setSubnodeOwner` round-trip confirmed; CORE-01..05 closed)*
 
 ### Active
 
 <!-- Current scope. Building toward these. The phased fork plan (spec §7). -->
 
-- [ ] Repo scaffold — Hardhat 3 + Bun project; shared utility libraries (`NameCoder`, `BytesUtils`, `HexUtils`, `StringUtils`, `ENSIP19`); core interfaces; Vitest + viem test harness
-- [ ] Naming layer — `RNSRegistry`, `Root`, `RootSecurityController`; root-node ownership wired to `Root`
+
 - [ ] `.rise` registrar — `RiseRegistrar` (ERC-721, `baseNode = namehash('rise')`), `RegistrarSecurityController`; `.rise` TLD assigned
 - [ ] Resolution — resolver `profiles/`, `PublicResolver`, `OwnedResolver` (for the `.rise` node)
 - [ ] Pricing — `RisePriceOracle`: flat, owner-settable, native-token-denominated per-length pricing satisfying `IPriceOracle`
@@ -136,4 +136,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-20 after initialization*
+*Last updated: 2026-05-25 after Phase 2 (Naming Layer Foundation) completion — 4/4 plans shipped, CORE-01..05 verified locally + on RISE testnet*
