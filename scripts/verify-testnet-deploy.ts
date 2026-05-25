@@ -437,18 +437,30 @@ async function main() {
   if (inHardhat) {
     // Dynamic import — only loaded on the Hardhat-run path so the standalone
     // entry point doesn't pull in HRE for nothing.
+    type ResolvedVar = {
+      _type?: 'ResolvedConfigurationVariable'
+      get?: () => Promise<string>
+      getUrl?: () => Promise<string>
+      getHexString?: () => Promise<string>
+    }
     const hh = (await import('hardhat')) as {
       network: {
         connect: (
           params: string | { network: string },
         ) => Promise<{
           networkName: string
-          networkConfig: { url?: unknown; accounts?: unknown }
+          networkConfig: {
+            url?: string | ResolvedVar
+            accounts?: Array<string | ResolvedVar> | string
+          }
           provider: unknown
         }>
       }
     }
-    let networkConfig: { url?: unknown; accounts?: unknown }
+    let networkConfig: {
+      url?: string | ResolvedVar
+      accounts?: Array<string | ResolvedVar> | string
+    }
     try {
       const conn = await hh.network.connect({ network: 'riseTestnet' })
       networkConfig = conn.networkConfig
@@ -462,16 +474,45 @@ async function main() {
       )
       process.exit(1)
     }
-    const url = networkConfig.url
-    const accountsField = networkConfig.accounts
-    const firstAccount = Array.isArray(accountsField) ? accountsField[0] : undefined
-    if (!url || typeof url !== 'string') {
-      console.error('network.connect did not yield a string url — check hardhat.config.ts riseTestnet block.')
+
+    // Hardhat 3 returns `ResolvedConfigurationVariable` wrappers for values
+    // that came from configVariable() in the user config (vs. literal strings).
+    // The wrapper has async .getUrl() / .getHexString() methods that do the
+    // actual keystore unlock + format validation. We accept either shape.
+    const unwrapUrl = async (v: unknown): Promise<string | null> => {
+      if (typeof v === 'string') return v
+      if (
+        typeof v === 'object' &&
+        v !== null &&
+        'getUrl' in v &&
+        typeof (v as ResolvedVar).getUrl === 'function'
+      ) {
+        return await (v as ResolvedVar).getUrl!()
+      }
+      return null
+    }
+    const unwrapHex = async (v: unknown): Promise<string | null> => {
+      if (typeof v === 'string') return v
+      if (typeof v !== 'object' || v === null) return null
+      const rv = v as ResolvedVar
+      if (typeof rv.getHexString === 'function') return await rv.getHexString()
+      if (typeof rv.get === 'function') return await rv.get()
+      return null
+    }
+
+    const url = await unwrapUrl(networkConfig.url)
+    if (!url || !/^https?:\/\//i.test(url)) {
+      console.error(
+        'network.connect did not yield a usable RPC URL —',
+        'check hardhat.config.ts riseTestnet.url and the RISE_TESTNET_RPC keystore entry.',
+      )
       process.exit(1)
     }
+    const accountsField = networkConfig.accounts
+    const firstAccountRaw = Array.isArray(accountsField) ? accountsField[0] : undefined
+    const firstAccount = await unwrapHex(firstAccountRaw)
     if (
       !firstAccount ||
-      typeof firstAccount !== 'string' ||
       !/^0x[0-9a-fA-F]{64}$/.test(firstAccount)
     ) {
       console.error(
