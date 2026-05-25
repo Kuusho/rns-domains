@@ -11,7 +11,7 @@
     "deploy:testnet": "hardhat deploy --network riseTestnet --skip-prompts",
     "verify:testnet": "node --experimental-strip-types --no-warnings scripts/verify-testnet-deploy.ts",
     "verify:testnet:live": "node --experimental-strip-types --no-warnings scripts/verify-testnet-deploy.ts --live",
-    "verify:testnet:hh": "hardhat run scripts/verify-testnet-deploy.ts --network riseTestnet --no-compile"
+    "verify:testnet:hh": "node ./node_modules/.bin/hardhat run scripts/verify-testnet-deploy.ts --network riseTestnet --no-compile"
   },
   "devDependencies": {
     "@ensdomains/hardhat-chai-matchers-viem": "^0.1.14",
