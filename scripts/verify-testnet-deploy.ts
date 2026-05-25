@@ -404,18 +404,31 @@ async function main() {
   //       mode is opt-in via `--live` / `--exercise` flag.
   //
   //   (B) In-Hardhat — `npx hardhat run scripts/verify-testnet-deploy.ts
-  //       --network riseTestnet`. Hardhat establishes the riseTestnet
-  //       connection BEFORE running the script, which means the keystore
-  //       plugin has already been prompted (ONCE) for the password and
-  //       resolved BOTH configVariable('RISE_TESTNET_RPC') and
-  //       configVariable('DEPLOYER_KEY') in-process (master-key cached, no
-  //       second prompt). We grab the resolved values from hre.network.config
-  //       and bypass the subprocess fallback entirely. LIVE mode is implied —
-  //       the only reason to use the Hardhat-run entry point is to exercise
-  //       the on-chain round-trip with the keystore-held signer.
+  //       --network riseTestnet --no-compile`. The script reaches into
+  //       Hardhat's runtime via `await network.connect('riseTestnet')`,
+  //       which triggers the keystore plugin to prompt ONCE for the master
+  //       password and resolve BOTH configVariable('RISE_TESTNET_RPC') and
+  //       configVariable('DEPLOYER_KEY') in-process (master key cached for
+  //       the second read). Resolved values come back on the
+  //       NetworkConnection's `networkConfig` field. LIVE mode is implied —
+  //       the only reason to use this entry point is to exercise the on-
+  //       chain round-trip with the keystore-held signer.
   //
-  // HARDHAT_NETWORK is set by Hardhat itself when --network is passed.
-  const inHardhat = process.env.HARDHAT_NETWORK === 'riseTestnet'
+  // Detection signal — Hardhat 3 does NOT set HARDHAT_NETWORK like v2 did
+  // (verified via probe). Reliable signal is process.argv: when invoked via
+  // `hardhat run script.ts --network NAME`, argv[1] ends with the hardhat
+  // binary path and argv[2] is 'run'. We further require --network
+  // riseTestnet to scope the in-Hardhat branch to this specific network.
+  const argvHasHardhatRun =
+    typeof process.argv[1] === 'string' &&
+    process.argv[1].endsWith('/hardhat') &&
+    process.argv[2] === 'run'
+  const networkFlagIdx = process.argv.indexOf('--network')
+  const networkFlagValue =
+    networkFlagIdx >= 0 && networkFlagIdx + 1 < process.argv.length
+      ? process.argv[networkFlagIdx + 1]
+      : undefined
+  const inHardhat = argvHasHardhatRun && networkFlagValue === 'riseTestnet'
 
   let resolvedRpc: string
   let resolvedKey: Hex | null = null
@@ -423,33 +436,48 @@ async function main() {
 
   if (inHardhat) {
     // Dynamic import — only loaded on the Hardhat-run path so the standalone
-    // entry point doesn't pull in HRE (which would fail outside a Hardhat
-    // project context).
-    const hreModule = (await import('hardhat')) as { default?: unknown } & Record<string, unknown>
-    const hre = (hreModule.default ?? hreModule) as {
-      network?: {
-        name?: string
-        config?: { url?: string; accounts?: unknown[] | string }
+    // entry point doesn't pull in HRE for nothing.
+    const hh = (await import('hardhat')) as {
+      network: {
+        connect: (
+          params: string | { network: string },
+        ) => Promise<{
+          networkName: string
+          networkConfig: { url?: unknown; accounts?: unknown }
+          provider: unknown
+        }>
       }
-      config?: { networks?: Record<string, { url?: string; accounts?: unknown[] | string }> }
     }
-    const netCfg = hre.network?.config ?? hre.config?.networks?.riseTestnet
-    if (!netCfg) {
+    let networkConfig: { url?: unknown; accounts?: unknown }
+    try {
+      const conn = await hh.network.connect({ network: 'riseTestnet' })
+      networkConfig = conn.networkConfig
+    } catch (e) {
       console.error(
-        'Could not resolve hre.network.config for riseTestnet.',
-        'Was the script invoked via `hardhat run ... --network riseTestnet`?',
+        'hardhat network.connect("riseTestnet") failed:',
+        (e as Error).message,
+      )
+      console.error(
+        '(was the script invoked as `hardhat run ... --network riseTestnet --no-compile`?)',
       )
       process.exit(1)
     }
-    const url = netCfg.url
-    const accountsField = netCfg.accounts
+    const url = networkConfig.url
+    const accountsField = networkConfig.accounts
     const firstAccount = Array.isArray(accountsField) ? accountsField[0] : undefined
     if (!url || typeof url !== 'string') {
-      console.error('hre.network.config.url is missing or not a string — check hardhat.config.ts riseTestnet block.')
+      console.error('network.connect did not yield a string url — check hardhat.config.ts riseTestnet block.')
       process.exit(1)
     }
-    if (!firstAccount || typeof firstAccount !== 'string' || !/^0x[0-9a-fA-F]{64}$/.test(firstAccount)) {
-      console.error('hre.network.config.accounts[0] is missing or not a 0x-prefixed 32-byte hex key — check the keystore.')
+    if (
+      !firstAccount ||
+      typeof firstAccount !== 'string' ||
+      !/^0x[0-9a-fA-F]{64}$/.test(firstAccount)
+    ) {
+      console.error(
+        'network.connect did not yield a 0x-prefixed 32-byte deployer key —',
+        'check the keystore (`npx hardhat keystore list` should include DEPLOYER_KEY).',
+      )
       process.exit(1)
     }
     resolvedRpc = url
