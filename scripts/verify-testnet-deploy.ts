@@ -295,6 +295,11 @@ async function runLiveExercise(opts: {
   registry: Deployment
   root: Deployment
   rpc: string
+  // Optional — when running via `hardhat run --network riseTestnet`, main()
+  // grabs this from hre.network.config (resolved by the keystore plugin
+  // in-process). When running standalone, leave undefined and we resolve
+  // from process.env / keystore-subprocess like before.
+  deployerKey?: Hex
 }) {
   const { registry, root, rpc } = opts
 
@@ -302,9 +307,11 @@ async function runLiveExercise(opts: {
     '\n[3/3] Live exercise — RNSRoot.setSubnodeOwner(labelhash("smoke"), deployer)',
   )
 
-  // Env-first resolution — same gates as the RPC URL. The validator already
-  // enforces the 0x + 64 hex shape, so we don't need a separate normaliser.
-  const deployerKey = resolveConfigValue('DEPLOYER_KEY', 'privateKey') as Hex
+  // Prefer caller-supplied key (Hardhat-run path). Otherwise env-first
+  // resolution — same gates as the RPC URL. The shape validator already
+  // enforces the 0x + 64 hex shape, so no separate normaliser is needed.
+  const deployerKey =
+    opts.deployerKey ?? (resolveConfigValue('DEPLOYER_KEY', 'privateKey') as Hex)
 
   const account = privateKeyToAccount(deployerKey)
   const publicClient = createPublicClient({
@@ -388,19 +395,83 @@ async function runLiveExercise(opts: {
 
 async function main() {
   const argv = process.argv.slice(2)
-  const live = argv.includes('--live') || argv.includes('--exercise')
-  // --read-only is the default; accept it explicitly for plan-clarity:
-  //   node scripts/verify-testnet-deploy.ts --read-only
 
-  // Resolve the RPC up front (env-first; keystore fallback). We log only its
-  // host — never the full URL — because it may embed a provider API key.
-  const resolvedRpc = getRpcUrl()
+  // Two invocation paths:
+  //
+  //   (A) Standalone — `bun run verify:testnet[:live]` (or `node ... --live`).
+  //       RISE_TESTNET_RPC and DEPLOYER_KEY resolve via the env-first path
+  //       (process.env → keystore-subprocess fallback → clear error). LIVE
+  //       mode is opt-in via `--live` / `--exercise` flag.
+  //
+  //   (B) In-Hardhat — `npx hardhat run scripts/verify-testnet-deploy.ts
+  //       --network riseTestnet`. Hardhat establishes the riseTestnet
+  //       connection BEFORE running the script, which means the keystore
+  //       plugin has already been prompted (ONCE) for the password and
+  //       resolved BOTH configVariable('RISE_TESTNET_RPC') and
+  //       configVariable('DEPLOYER_KEY') in-process (master-key cached, no
+  //       second prompt). We grab the resolved values from hre.network.config
+  //       and bypass the subprocess fallback entirely. LIVE mode is implied —
+  //       the only reason to use the Hardhat-run entry point is to exercise
+  //       the on-chain round-trip with the keystore-held signer.
+  //
+  // HARDHAT_NETWORK is set by Hardhat itself when --network is passed.
+  const inHardhat = process.env.HARDHAT_NETWORK === 'riseTestnet'
+
+  let resolvedRpc: string
+  let resolvedKey: Hex | null = null
+  let live: boolean
+
+  if (inHardhat) {
+    // Dynamic import — only loaded on the Hardhat-run path so the standalone
+    // entry point doesn't pull in HRE (which would fail outside a Hardhat
+    // project context).
+    const hreModule = (await import('hardhat')) as { default?: unknown } & Record<string, unknown>
+    const hre = (hreModule.default ?? hreModule) as {
+      network?: {
+        name?: string
+        config?: { url?: string; accounts?: unknown[] | string }
+      }
+      config?: { networks?: Record<string, { url?: string; accounts?: unknown[] | string }> }
+    }
+    const netCfg = hre.network?.config ?? hre.config?.networks?.riseTestnet
+    if (!netCfg) {
+      console.error(
+        'Could not resolve hre.network.config for riseTestnet.',
+        'Was the script invoked via `hardhat run ... --network riseTestnet`?',
+      )
+      process.exit(1)
+    }
+    const url = netCfg.url
+    const accountsField = netCfg.accounts
+    const firstAccount = Array.isArray(accountsField) ? accountsField[0] : undefined
+    if (!url || typeof url !== 'string') {
+      console.error('hre.network.config.url is missing or not a string — check hardhat.config.ts riseTestnet block.')
+      process.exit(1)
+    }
+    if (!firstAccount || typeof firstAccount !== 'string' || !/^0x[0-9a-fA-F]{64}$/.test(firstAccount)) {
+      console.error('hre.network.config.accounts[0] is missing or not a 0x-prefixed 32-byte hex key — check the keystore.')
+      process.exit(1)
+    }
+    resolvedRpc = url
+    resolvedKey = firstAccount as Hex
+    live = true
+  } else {
+    live = argv.includes('--live') || argv.includes('--exercise')
+    // Resolve the RPC up front (env-first; keystore fallback). We log only
+    // its host — never the full URL — because it may embed a provider API
+    // key.
+    resolvedRpc = getRpcUrl()
+    // DEPLOYER_KEY is only required for live mode in the standalone path —
+    // runLiveExercise resolves it itself if not pre-supplied.
+  }
+
   console.log('---')
   console.log('RNS testnet smoke-deploy verification')
   console.log(`  chainId      : ${CHAIN_ID}`)
   console.log(`  rpc host     : ${hostOf(resolvedRpc)}`)
   console.log(`  deployments  : ${DEPLOYMENTS_DIR}`)
   console.log(`  mode         : ${live ? 'LIVE (state-changing)' : 'read-only'}`)
+  console.log(`  source       : ${inHardhat ? 'hardhat run (keystore in-process)' : 'standalone (env-first)'}`)
   console.log('---')
 
   const registry = readDeployment('RNSRegistry')
@@ -410,7 +481,14 @@ async function main() {
   await runReadOnlyChecks({ registry, root, securityController, rpc: resolvedRpc })
 
   if (live) {
-    await runLiveExercise({ registry, root, rpc: resolvedRpc })
+    await runLiveExercise({
+      registry,
+      root,
+      rpc: resolvedRpc,
+      // resolvedKey is non-null in the inHardhat branch; in standalone it's
+      // null and runLiveExercise falls back to its own env-first resolver.
+      ...(resolvedKey ? { deployerKey: resolvedKey } : {}),
+    })
   }
 
   if (process.exitCode && process.exitCode !== 0) {
