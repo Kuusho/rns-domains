@@ -1,0 +1,462 @@
+{
+  "address": "0x9709c41bf20948bcdc22492d8fbb6acdd3ce6685",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract RNS",
+          "name": "_rns",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "controller",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "enabled",
+          "type": "bool"
+        }
+      ],
+      "name": "ControllerChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "label",
+          "type": "bytes32"
+        }
+      ],
+      "name": "TLDLocked",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "controllers",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "label",
+          "type": "bytes32"
+        }
+      ],
+      "name": "lock",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "locked",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "rns",
+      "outputs": [
+        {
+          "internalType": "contract RNS",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "controller",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "enabled",
+          "type": "bool"
+        }
+      ],
+      "name": "setController",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "resolver",
+          "type": "address"
+        }
+      ],
+      "name": "setResolver",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "label",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "setSubnodeOwner",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "interfaceID",
+          "type": "bytes4"
+        }
+      ],
+      "name": "supportsInterface",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "contractName": "RNSRoot",
+  "sourceName": "contracts/root/RNSRoot.sol",
+  "bytecode": "0x6080604052348015600f57600080fd5b5060405161094a38038061094a833981016040819052602c9160a7565b6033336057565b600280546001600160a01b0319166001600160a01b039290921691909117905560d5565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b60006020828403121560b857600080fd5b81516001600160a01b038116811460ce57600080fd5b9392505050565b610866806100e46000396000f3fe608060405234801561001057600080fd5b50600436106100c95760003560e01c80638cb8ecec11610081578063da8c229e1161005b578063da8c229e14610201578063e0dba60f14610224578063f2fde38b1461023757600080fd5b80638cb8ecec146101ad5780638da5cb5b146101c0578063cbe9e764146101de57600080fd5b80634e543b26116100b25780634e543b261461014d578063663b44c514610160578063715018a6146101a557600080fd5b806301670ba9146100ce57806301ffc9a7146100e3575b600080fd5b6100e16100dc366004610709565b61024a565b005b6101386100f1366004610722565b7fffffffff00000000000000000000000000000000000000000000000000000000167f01ffc9a7000000000000000000000000000000000000000000000000000000001490565b60405190151581526020015b60405180910390f35b6100e161015b366004610794565b6102b6565b6002546101809073ffffffffffffffffffffffffffffffffffffffff1681565b60405173ffffffffffffffffffffffffffffffffffffffff9091168152602001610144565b6100e161034d565b6100e16101bb3660046107af565b610361565b60005473ffffffffffffffffffffffffffffffffffffffff16610180565b6101386101ec366004610709565b60036020526000908152604090205460ff1681565b61013861020f366004610794565b60016020526000908152604090205460ff1681565b6100e16102323660046107db565b6104ca565b6100e1610245366004610794565b61055c565b610252610613565b60405181907f1764176cfa565853ba1ded547a830a9f9bff95231ef6fd228b3ddd617577756990600090a2600090815260036020526040902080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00166001179055565b6102be610613565b6002546040517f1896f70a0000000000000000000000000000000000000000000000000000000081526000600482015273ffffffffffffffffffffffffffffffffffffffff838116602483015290911690631896f70a90604401600060405180830381600087803b15801561033257600080fd5b505af1158015610346573d6000803e3d6000fd5b5050505050565b610355610613565b61035f6000610694565b565b3360009081526001602052604090205460ff16610405576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602860248201527f436f6e74726f6c6c61626c653a2043616c6c6572206973206e6f74206120636f60448201527f6e74726f6c6c657200000000000000000000000000000000000000000000000060648201526084015b60405180910390fd5b60008281526003602052604090205460ff161561042157600080fd5b6002546040517f06ab5923000000000000000000000000000000000000000000000000000000008152600060048201526024810184905273ffffffffffffffffffffffffffffffffffffffff8381166044830152909116906306ab5923906064016020604051808303816000875af11580156104a1573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906104c59190610817565b505050565b6104d2610613565b73ffffffffffffffffffffffffffffffffffffffff821660008181526001602090815260409182902080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff001685151590811790915591519182527f4c97694570a07277810af7e5669ffd5f6a2d6b74b6e9a274b8b870fd5114cf87910160405180910390a25050565b610564610613565b73ffffffffffffffffffffffffffffffffffffffff8116610607576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f646472657373000000000000000000000000000000000000000000000000000060648201526084016103fc565b61061081610694565b50565b60005473ffffffffffffffffffffffffffffffffffffffff16331461035f576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657260448201526064016103fc565b6000805473ffffffffffffffffffffffffffffffffffffffff8381167fffffffffffffffffffffffff0000000000000000000000000000000000000000831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b60006020828403121561071b57600080fd5b5035919050565b60006020828403121561073457600080fd5b81357fffffffff000000000000000000000000000000000000000000000000000000008116811461076457600080fd5b9392505050565b803573ffffffffffffffffffffffffffffffffffffffff8116811461078f57600080fd5b919050565b6000602082840312156107a657600080fd5b6107648261076b565b600080604083850312156107c257600080fd5b823591506107d26020840161076b565b90509250929050565b600080604083850312156107ee57600080fd5b6107f78361076b565b91506020830135801515811461080c57600080fd5b809150509250929050565b60006020828403121561082957600080fd5b505191905056fea26469706673582212208a1197a2f143785e4e052bf6ee672c1719235c9c0f2d87143af815c47e4d53fe64736f6c634300081a0033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100c95760003560e01c80638cb8ecec11610081578063da8c229e1161005b578063da8c229e14610201578063e0dba60f14610224578063f2fde38b1461023757600080fd5b80638cb8ecec146101ad5780638da5cb5b146101c0578063cbe9e764146101de57600080fd5b80634e543b26116100b25780634e543b261461014d578063663b44c514610160578063715018a6146101a557600080fd5b806301670ba9146100ce57806301ffc9a7146100e3575b600080fd5b6100e16100dc366004610709565b61024a565b005b6101386100f1366004610722565b7fffffffff00000000000000000000000000000000000000000000000000000000167f01ffc9a7000000000000000000000000000000000000000000000000000000001490565b60405190151581526020015b60405180910390f35b6100e161015b366004610794565b6102b6565b6002546101809073ffffffffffffffffffffffffffffffffffffffff1681565b60405173ffffffffffffffffffffffffffffffffffffffff9091168152602001610144565b6100e161034d565b6100e16101bb3660046107af565b610361565b60005473ffffffffffffffffffffffffffffffffffffffff16610180565b6101386101ec366004610709565b60036020526000908152604090205460ff1681565b61013861020f366004610794565b60016020526000908152604090205460ff1681565b6100e16102323660046107db565b6104ca565b6100e1610245366004610794565b61055c565b610252610613565b60405181907f1764176cfa565853ba1ded547a830a9f9bff95231ef6fd228b3ddd617577756990600090a2600090815260036020526040902080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00166001179055565b6102be610613565b6002546040517f1896f70a0000000000000000000000000000000000000000000000000000000081526000600482015273ffffffffffffffffffffffffffffffffffffffff838116602483015290911690631896f70a90604401600060405180830381600087803b15801561033257600080fd5b505af1158015610346573d6000803e3d6000fd5b5050505050565b610355610613565b61035f6000610694565b565b3360009081526001602052604090205460ff16610405576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602860248201527f436f6e74726f6c6c61626c653a2043616c6c6572206973206e6f74206120636f60448201527f6e74726f6c6c657200000000000000000000000000000000000000000000000060648201526084015b60405180910390fd5b60008281526003602052604090205460ff161561042157600080fd5b6002546040517f06ab5923000000000000000000000000000000000000000000000000000000008152600060048201526024810184905273ffffffffffffffffffffffffffffffffffffffff8381166044830152909116906306ab5923906064016020604051808303816000875af11580156104a1573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906104c59190610817565b505050565b6104d2610613565b73ffffffffffffffffffffffffffffffffffffffff821660008181526001602090815260409182902080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff001685151590811790915591519182527f4c97694570a07277810af7e5669ffd5f6a2d6b74b6e9a274b8b870fd5114cf87910160405180910390a25050565b610564610613565b73ffffffffffffffffffffffffffffffffffffffff8116610607576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f646472657373000000000000000000000000000000000000000000000000000060648201526084016103fc565b61061081610694565b50565b60005473ffffffffffffffffffffffffffffffffffffffff16331461035f576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657260448201526064016103fc565b6000805473ffffffffffffffffffffffffffffffffffffffff8381167fffffffffffffffffffffffff0000000000000000000000000000000000000000831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b60006020828403121561071b57600080fd5b5035919050565b60006020828403121561073457600080fd5b81357fffffffff000000000000000000000000000000000000000000000000000000008116811461076457600080fd5b9392505050565b803573ffffffffffffffffffffffffffffffffffffffff8116811461078f57600080fd5b919050565b6000602082840312156107a657600080fd5b6107648261076b565b600080604083850312156107c257600080fd5b823591506107d26020840161076b565b90509250929050565b600080604083850312156107ee57600080fd5b6107f78361076b565b91506020830135801515811461080c57600080fd5b809150509250929050565b60006020828403121561082957600080fd5b505191905056fea26469706673582212208a1197a2f143785e4e052bf6ee672c1719235c9c0f2d87143af815c47e4d53fe64736f6c634300081a0033",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "immutableReferences": {},
+  "inputSourceName": "project/contracts/root/RNSRoot.sol",
+  "devdoc": {
+    "details": "Clean-room re-implementation of ENS's `Root` (D-06). Holds an `RNS`      registry reference (named `rns`, not `ens`, per D-11) and, once the      registry's root node `0x0` is transferred to this contract, holds the      sole privileged write path into it. TLD creation is gated by      `onlyController` (from `RNSControllable`); the locked-TLD `require` is      intentionally bare so the conformance suite's revert-without-reason      assertion passes byte-for-byte (D-07).",
+    "events": {
+      "ControllerChanged(address,bool)": {
+        "params": {
+          "controller": "The address whose controller status changed.",
+          "enabled": "True when the address became a controller, false when        revoked."
+        }
+      },
+      "TLDLocked(bytes32)": {
+        "params": {
+          "label": "The labelhash of the locked TLD."
+        }
+      }
+    },
+    "kind": "dev",
+    "methods": {
+      "constructor": {
+        "params": {
+          "_rns": "The RNS registry whose root node `0x0` this contract will own."
+        }
+      },
+      "lock(bytes32)": {
+        "params": {
+          "label": "The labelhash of the TLD to lock."
+        }
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "setController(address,bool)": {
+        "params": {
+          "controller": "The address to register or revoke.",
+          "enabled": "True to register the address as a controller, false to        revoke it."
+        }
+      },
+      "setResolver(address)": {
+        "params": {
+          "resolver": "The resolver address to assign to the root node."
+        }
+      },
+      "setSubnodeOwner(bytes32,address)": {
+        "details": "Reverts (without a reason) if `label` has been permanently locked.",
+        "params": {
+          "label": "The labelhash of the TLD to assign.",
+          "owner": "The address to make the owner of the TLD node."
+        }
+      },
+      "supportsInterface(bytes4)": {
+        "params": {
+          "interfaceID": "The interface identifier to query."
+        },
+        "returns": {
+          "_0": "True if `interfaceID` is the ERC-165 meta interface id."
+        }
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "stateVariables": {
+      "INTERFACE_META_ID": {
+        "details": "The ERC-165 meta interface id — `bytes4(keccak256(\"supportsInterface(bytes4)\"))`."
+      },
+      "ROOT_NODE": {
+        "details": "The registry root node — all TLDs are subnodes of `0x0`."
+      }
+    },
+    "title": "RNSRoot — owner of the registry root node.",
+    "version": 1
+  },
+  "evm": {
+    "gasEstimates": {
+      "creation": {
+        "codeDepositCost": "430000",
+        "executionCost": "infinite",
+        "totalCost": "infinite"
+      },
+      "external": {
+        "controllers(address)": "2530",
+        "lock(bytes32)": "27833",
+        "locked(bytes32)": "2506",
+        "owner()": "2352",
+        "renounceOwnership()": "infinite",
+        "rns()": "2358",
+        "setController(address,bool)": "28302",
+        "setResolver(address)": "infinite",
+        "setSubnodeOwner(bytes32,address)": "infinite",
+        "supportsInterface(bytes4)": "356",
+        "transferOwnership(address)": "28336"
+      }
+    }
+  },
+  "metadata": "{\"compiler\":{\"version\":\"0.8.26+commit.8a97fa7a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract RNS\",\"name\":\"_rns\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"controller\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"enabled\",\"type\":\"bool\"}],\"name\":\"ControllerChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"label\",\"type\":\"bytes32\"}],\"name\":\"TLDLocked\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"controllers\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"label\",\"type\":\"bytes32\"}],\"name\":\"lock\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"locked\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rns\",\"outputs\":[{\"internalType\":\"contract RNS\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"controller\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"enabled\",\"type\":\"bool\"}],\"name\":\"setController\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"resolver\",\"type\":\"address\"}],\"name\":\"setResolver\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"label\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"setSubnodeOwner\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Clean-room re-implementation of ENS's `Root` (D-06). Holds an `RNS`      registry reference (named `rns`, not `ens`, per D-11) and, once the      registry's root node `0x0` is transferred to this contract, holds the      sole privileged write path into it. TLD creation is gated by      `onlyController` (from `RNSControllable`); the locked-TLD `require` is      intentionally bare so the conformance suite's revert-without-reason      assertion passes byte-for-byte (D-07).\",\"events\":{\"ControllerChanged(address,bool)\":{\"params\":{\"controller\":\"The address whose controller status changed.\",\"enabled\":\"True when the address became a controller, false when        revoked.\"}},\"TLDLocked(bytes32)\":{\"params\":{\"label\":\"The labelhash of the locked TLD.\"}}},\"kind\":\"dev\",\"methods\":{\"constructor\":{\"params\":{\"_rns\":\"The RNS registry whose root node `0x0` this contract will own.\"}},\"lock(bytes32)\":{\"params\":{\"label\":\"The labelhash of the TLD to lock.\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"setController(address,bool)\":{\"params\":{\"controller\":\"The address to register or revoke.\",\"enabled\":\"True to register the address as a controller, false to        revoke it.\"}},\"setResolver(address)\":{\"params\":{\"resolver\":\"The resolver address to assign to the root node.\"}},\"setSubnodeOwner(bytes32,address)\":{\"details\":\"Reverts (without a reason) if `label` has been permanently locked.\",\"params\":{\"label\":\"The labelhash of the TLD to assign.\",\"owner\":\"The address to make the owner of the TLD node.\"}},\"supportsInterface(bytes4)\":{\"params\":{\"interfaceID\":\"The interface identifier to query.\"},\"returns\":{\"_0\":\"True if `interfaceID` is the ERC-165 meta interface id.\"}},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"stateVariables\":{\"INTERFACE_META_ID\":{\"details\":\"The ERC-165 meta interface id \\u2014 `bytes4(keccak256(\\\"supportsInterface(bytes4)\\\"))`.\"},\"ROOT_NODE\":{\"details\":\"The registry root node \\u2014 all TLDs are subnodes of `0x0`.\"}},\"title\":\"RNSRoot \\u2014 owner of the registry root node.\",\"version\":1},\"userdoc\":{\"events\":{\"ControllerChanged(address,bool)\":{\"notice\":\"Emitted when a controller is registered or de-registered.\"},\"TLDLocked(bytes32)\":{\"notice\":\"Emitted when a TLD label is permanently locked.\"}},\"kind\":\"user\",\"methods\":{\"constructor\":{\"notice\":\"Constructs the root contract.\"},\"controllers(address)\":{\"notice\":\"Whether an address is currently a registered controller.\"},\"lock(bytes32)\":{\"notice\":\"Permanently locks a TLD label so it can never be reassigned via         `setSubnodeOwner`. Owner-only. There is no unlock path.\"},\"locked(bytes32)\":{\"notice\":\"Whether a TLD label is permanently locked against reassignment.\"},\"rns()\":{\"notice\":\"The RNS registry this contract owns the root node of.\"},\"setController(address,bool)\":{\"notice\":\"Registers or de-registers a controller. Owner-only.\"},\"setResolver(address)\":{\"notice\":\"Sets the resolver of the registry root node `0x0`. Owner-only.\"},\"setSubnodeOwner(bytes32,address)\":{\"notice\":\"Creates or reassigns a top-level domain. Controller-only.\"},\"supportsInterface(bytes4)\":{\"notice\":\"ERC-165 introspection \\u2014 reports support for the ERC-165 meta         interface only.\"}},\"notice\":\"The contract that owns the RNS registry root node `0x0`. It is the         sole creator of top-level domains: a controller calls         `setSubnodeOwner(label, owner)` to assign a TLD, and the owner can         permanently `lock` a label so that TLD can never be reassigned.\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"project/contracts/root/RNSRoot.sol\":\"RNSRoot\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000000},\"remappings\":[\"project/:@openzeppelin/contracts/=npm/@openzeppelin/contracts@4.9.3/\"]},\"sources\":{\"npm/@openzeppelin/contracts@4.9.3/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.9.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * By default, the owner account will be the one that deploys the contract. This\\n * can later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the deployer as the initial owner.\\n     */\\n    constructor() {\\n        _transferOwnership(_msgSender());\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        require(owner() == _msgSender(), \\\"Ownable: caller is not the owner\\\");\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        require(newOwner != address(0), \\\"Ownable: new owner is the zero address\\\");\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xba43b97fba0d32eb4254f6a5a297b39a19a247082a02d6e69349e071e2946218\",\"license\":\"MIT\"},\"npm/@openzeppelin/contracts@4.9.3/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n}\\n\",\"keccak256\":\"0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7\",\"license\":\"MIT\"},\"project/contracts/registry/RNS.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.26;\\n\\n/// @title RNS \\u2014 RiseChain Name Service registry interface.\\n/// @notice The frozen, ENS-compatible external interface of the RNS registry.\\n///         Every downstream RNS contract (registrar, controllers, resolvers)\\n///         reads and writes the registry through this interface.\\n/// @dev Clean-room re-implementation of ENS's `ENS` interface (D-06). The\\n///      function signatures and the event topic layout below are byte-for-byte\\n///      ENS-compatible and MUST NOT change (D-07): the spec \\u00a75 dependency chain\\n///      assumes an ENS-compatible registry, so this surface is permanently\\n///      frozen. Re-implementation freedom applies only to contract bodies.\\ninterface RNS {\\n    /// @notice Emitted when the owner of a node assigns a new owner to one of\\n    ///         its subnodes.\\n    /// @param node The parent node.\\n    /// @param label The labelhash of the subnode being assigned.\\n    /// @param owner The address of the subnode's new owner.\\n    event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner);\\n\\n    /// @notice Emitted when the owner of a node transfers ownership to a new\\n    ///         account.\\n    /// @param node The node whose ownership changed.\\n    /// @param owner The address of the node's new owner.\\n    event Transfer(bytes32 indexed node, address owner);\\n\\n    /// @notice Emitted when the resolver for a node changes.\\n    /// @param node The node whose resolver changed.\\n    /// @param resolver The address of the node's new resolver.\\n    event NewResolver(bytes32 indexed node, address resolver);\\n\\n    /// @notice Emitted when the TTL of a node changes.\\n    /// @param node The node whose TTL changed.\\n    /// @param ttl The node's new TTL, in seconds.\\n    event NewTTL(bytes32 indexed node, uint64 ttl);\\n\\n    /// @notice Emitted when an operator is granted or revoked blanket rights\\n    ///         over all of an owner's nodes.\\n    /// @param owner The address whose records the operator may manage.\\n    /// @param operator The address being granted or revoked operator rights.\\n    /// @param approved True when the operator is approved, false when revoked.\\n    event ApprovalForAll(\\n        address indexed owner,\\n        address indexed operator,\\n        bool approved\\n    );\\n\\n    /// @notice Sets the owner, resolver, and TTL for an existing node.\\n    function setRecord(\\n        bytes32 node,\\n        address owner,\\n        address resolver,\\n        uint64 ttl\\n    ) external;\\n\\n    /// @notice Creates or updates a subnode and sets its owner, resolver, and TTL.\\n    function setSubnodeRecord(\\n        bytes32 node,\\n        bytes32 label,\\n        address owner,\\n        address resolver,\\n        uint64 ttl\\n    ) external;\\n\\n    /// @notice Creates or transfers a subnode and assigns its owner.\\n    /// @return The namehash of the affected subnode.\\n    function setSubnodeOwner(\\n        bytes32 node,\\n        bytes32 label,\\n        address owner\\n    ) external returns (bytes32);\\n\\n    /// @notice Sets the resolver address for a node.\\n    function setResolver(bytes32 node, address resolver) external;\\n\\n    /// @notice Transfers ownership of a node to a new address.\\n    function setOwner(bytes32 node, address owner) external;\\n\\n    /// @notice Sets the TTL, in seconds, for a node.\\n    function setTTL(bytes32 node, uint64 ttl) external;\\n\\n    /// @notice Grants or revokes blanket operator rights over the caller's nodes.\\n    function setApprovalForAll(address operator, bool approved) external;\\n\\n    /// @notice Returns the address that owns the specified node.\\n    function owner(bytes32 node) external view returns (address);\\n\\n    /// @notice Returns the resolver address for the specified node.\\n    function resolver(bytes32 node) external view returns (address);\\n\\n    /// @notice Returns the TTL, in seconds, of the specified node.\\n    function ttl(bytes32 node) external view returns (uint64);\\n\\n    /// @notice Returns whether a record exists for the specified node.\\n    function recordExists(bytes32 node) external view returns (bool);\\n\\n    /// @notice Returns whether `operator` may manage all of `owner`'s nodes.\\n    function isApprovedForAll(\\n        address owner,\\n        address operator\\n    ) external view returns (bool);\\n}\\n\",\"keccak256\":\"0xdd1e031271acf76c472591c09706b08a36af6b3509ee055f0ecef56601410392\",\"license\":\"MIT\"},\"project/contracts/root/RNSControllable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.26;\\n\\nimport {Ownable} from \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\n\\n/// @title RNSControllable \\u2014 owner/controller access mixin.\\n/// @notice An access-control base contract that layers a set of named\\n///         \\\"controllers\\\" on top of OpenZeppelin's single-owner model: the\\n///         owner appoints and revokes controllers, and the `onlyController`\\n///         modifier gates the privileged operations of any contract that\\n///         inherits this mixin.\\n/// @dev Clean-room re-implementation of ENS's `Controllable` (D-06). Inherited\\n///      by `RNSRoot`, where it gates TLD creation: only addresses the owner has\\n///      registered as controllers may create a `.rise`-style TLD. The revert\\n///      string in `onlyController` is byte-for-byte ENS-compatible and frozen\\n///      by D-07 \\u2014 the ported `TestRoot` conformance suite asserts it exactly.\\ncontract RNSControllable is Ownable {\\n    /// @notice Whether an address is currently a registered controller.\\n    mapping(address => bool) public controllers;\\n\\n    /// @notice Emitted when a controller is registered or de-registered.\\n    /// @param controller The address whose controller status changed.\\n    /// @param enabled True when the address became a controller, false when\\n    ///        revoked.\\n    event ControllerChanged(address indexed controller, bool enabled);\\n\\n    /// @dev Restricts a function to addresses registered via `setController`.\\n    ///      The reason string is frozen by D-07 \\u2014 the conformance suite asserts\\n    ///      it byte-for-byte.\\n    modifier onlyController() {\\n        require(\\n            controllers[msg.sender],\\n            \\\"Controllable: Caller is not a controller\\\"\\n        );\\n        _;\\n    }\\n\\n    /// @notice Registers or de-registers a controller. Owner-only.\\n    /// @param controller The address to register or revoke.\\n    /// @param enabled True to register the address as a controller, false to\\n    ///        revoke it.\\n    function setController(\\n        address controller,\\n        bool enabled\\n    ) public onlyOwner {\\n        controllers[controller] = enabled;\\n        emit ControllerChanged(controller, enabled);\\n    }\\n}\\n\",\"keccak256\":\"0x219080bf8d99a7d404defb258cd70c847df18c20ac03ade29989bdc24666fed7\",\"license\":\"MIT\"},\"project/contracts/root/RNSRoot.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.26;\\n\\nimport {RNS} from \\\"../registry/RNS.sol\\\";\\nimport {Ownable} from \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\nimport {RNSControllable} from \\\"./RNSControllable.sol\\\";\\n\\n/// @title RNSRoot \\u2014 owner of the registry root node.\\n/// @notice The contract that owns the RNS registry root node `0x0`. It is the\\n///         sole creator of top-level domains: a controller calls\\n///         `setSubnodeOwner(label, owner)` to assign a TLD, and the owner can\\n///         permanently `lock` a label so that TLD can never be reassigned.\\n/// @dev Clean-room re-implementation of ENS's `Root` (D-06). Holds an `RNS`\\n///      registry reference (named `rns`, not `ens`, per D-11) and, once the\\n///      registry's root node `0x0` is transferred to this contract, holds the\\n///      sole privileged write path into it. TLD creation is gated by\\n///      `onlyController` (from `RNSControllable`); the locked-TLD `require` is\\n///      intentionally bare so the conformance suite's revert-without-reason\\n///      assertion passes byte-for-byte (D-07).\\ncontract RNSRoot is Ownable, RNSControllable {\\n    /// @dev The registry root node \\u2014 all TLDs are subnodes of `0x0`.\\n    bytes32 private constant ROOT_NODE = bytes32(0);\\n\\n    /// @dev The ERC-165 meta interface id \\u2014 `bytes4(keccak256(\\\"supportsInterface(bytes4)\\\"))`.\\n    bytes4 private constant INTERFACE_META_ID = 0x01ffc9a7;\\n\\n    /// @notice The RNS registry this contract owns the root node of.\\n    RNS public rns;\\n\\n    /// @notice Whether a TLD label is permanently locked against reassignment.\\n    mapping(bytes32 => bool) public locked;\\n\\n    /// @notice Emitted when a TLD label is permanently locked.\\n    /// @param label The labelhash of the locked TLD.\\n    event TLDLocked(bytes32 indexed label);\\n\\n    /// @notice Constructs the root contract.\\n    /// @param _rns The RNS registry whose root node `0x0` this contract will own.\\n    constructor(RNS _rns) {\\n        rns = _rns;\\n    }\\n\\n    /// @notice Creates or reassigns a top-level domain. Controller-only.\\n    /// @dev Reverts (without a reason) if `label` has been permanently locked.\\n    /// @param label The labelhash of the TLD to assign.\\n    /// @param owner The address to make the owner of the TLD node.\\n    function setSubnodeOwner(\\n        bytes32 label,\\n        address owner\\n    ) external onlyController {\\n        require(!locked[label]);\\n        rns.setSubnodeOwner(ROOT_NODE, label, owner);\\n    }\\n\\n    /// @notice Sets the resolver of the registry root node `0x0`. Owner-only.\\n    /// @param resolver The resolver address to assign to the root node.\\n    function setResolver(address resolver) external onlyOwner {\\n        rns.setResolver(ROOT_NODE, resolver);\\n    }\\n\\n    /// @notice Permanently locks a TLD label so it can never be reassigned via\\n    ///         `setSubnodeOwner`. Owner-only. There is no unlock path.\\n    /// @param label The labelhash of the TLD to lock.\\n    function lock(bytes32 label) external onlyOwner {\\n        emit TLDLocked(label);\\n        locked[label] = true;\\n    }\\n\\n    /// @notice ERC-165 introspection \\u2014 reports support for the ERC-165 meta\\n    ///         interface only.\\n    /// @param interfaceID The interface identifier to query.\\n    /// @return True if `interfaceID` is the ERC-165 meta interface id.\\n    function supportsInterface(\\n        bytes4 interfaceID\\n    ) external pure returns (bool) {\\n        return interfaceID == INTERFACE_META_ID;\\n    }\\n}\\n\",\"keccak256\":\"0xe3e36dfc311fce757806f5fc5bf33d2e2ed45716b3a5b2ae45949ae56599aeca\",\"license\":\"MIT\"}},\"version\":1}",
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 7,
+        "contract": "project/contracts/root/RNSRoot.sol:RNSRoot",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 1461,
+        "contract": "project/contracts/root/RNSRoot.sol:RNSRoot",
+        "label": "controllers",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 1532,
+        "contract": "project/contracts/root/RNSRoot.sol:RNSRoot",
+        "label": "rns",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_contract(RNS)1015"
+      },
+      {
+        "astId": 1537,
+        "contract": "project/contracts/root/RNSRoot.sol:RNSRoot",
+        "label": "locked",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_bytes32,t_bool)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_contract(RNS)1015": {
+        "encoding": "inplace",
+        "label": "contract RNS",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_bytes32,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      }
+    }
+  },
+  "userdoc": {
+    "events": {
+      "ControllerChanged(address,bool)": {
+        "notice": "Emitted when a controller is registered or de-registered."
+      },
+      "TLDLocked(bytes32)": {
+        "notice": "Emitted when a TLD label is permanently locked."
+      }
+    },
+    "kind": "user",
+    "methods": {
+      "constructor": {
+        "notice": "Constructs the root contract."
+      },
+      "controllers(address)": {
+        "notice": "Whether an address is currently a registered controller."
+      },
+      "lock(bytes32)": {
+        "notice": "Permanently locks a TLD label so it can never be reassigned via         `setSubnodeOwner`. Owner-only. There is no unlock path."
+      },
+      "locked(bytes32)": {
+        "notice": "Whether a TLD label is permanently locked against reassignment."
+      },
+      "rns()": {
+        "notice": "The RNS registry this contract owns the root node of."
+      },
+      "setController(address,bool)": {
+        "notice": "Registers or de-registers a controller. Owner-only."
+      },
+      "setResolver(address)": {
+        "notice": "Sets the resolver of the registry root node `0x0`. Owner-only."
+      },
+      "setSubnodeOwner(bytes32,address)": {
+        "notice": "Creates or reassigns a top-level domain. Controller-only."
+      },
+      "supportsInterface(bytes4)": {
+        "notice": "ERC-165 introspection — reports support for the ERC-165 meta         interface only."
+      }
+    },
+    "notice": "The contract that owns the RNS registry root node `0x0`. It is the         sole creator of top-level domains: a controller calls         `setSubnodeOwner(label, owner)` to assign a TLD, and the owner can         permanently `lock` a label so that TLD can never be reassigned.",
+    "version": 1
+  },
+  "argsData": "0x0000000000000000000000001e413c590a65daea572e48a7da40adfc4fdedcab",
+  "transaction": {
+    "hash": "0x081bf0958be742c97998309f09f6c459097484f5236b91f2e13d3ed18a2da8db",
+    "nonce": "0x1",
+    "origin": "0xfe8ed71eb54a95b7f35737aa9f34114e361e6ad1"
+  },
+  "receipt": {
+    "blockHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "blockNumber": "0x2a8fb81",
+    "transactionIndex": "0x110"
+  }
+}

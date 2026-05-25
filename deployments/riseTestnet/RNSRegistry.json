@@ -1,0 +1,651 @@
+{
+  "address": "0x1e413c590a65daea572e48a7da40adfc4fdedcab",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "approved",
+          "type": "bool"
+        }
+      ],
+      "name": "ApprovalForAll",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "label",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "NewOwner",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "resolver",
+          "type": "address"
+        }
+      ],
+      "name": "NewResolver",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "ttl",
+          "type": "uint64"
+        }
+      ],
+      "name": "NewTTL",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "Transfer",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        }
+      ],
+      "name": "isApprovedForAll",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        }
+      ],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        }
+      ],
+      "name": "recordExists",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        }
+      ],
+      "name": "resolver",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "approved",
+          "type": "bool"
+        }
+      ],
+      "name": "setApprovalForAll",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "setOwner",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "resolver",
+          "type": "address"
+        },
+        {
+          "internalType": "uint64",
+          "name": "ttl",
+          "type": "uint64"
+        }
+      ],
+      "name": "setRecord",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "resolver",
+          "type": "address"
+        }
+      ],
+      "name": "setResolver",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "label",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "setSubnodeOwner",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "label",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "resolver",
+          "type": "address"
+        },
+        {
+          "internalType": "uint64",
+          "name": "ttl",
+          "type": "uint64"
+        }
+      ],
+      "name": "setSubnodeRecord",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint64",
+          "name": "ttl",
+          "type": "uint64"
+        }
+      ],
+      "name": "setTTL",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        }
+      ],
+      "name": "ttl",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "contractName": "RNSRegistry",
+  "sourceName": "contracts/registry/RNSRegistry.sol",
+  "bytecode": "0x6080604052348015600f57600080fd5b5060008080526020527fad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb580546001600160a01b03191633179055610c1a806100586000396000f3fe608060405234801561001057600080fd5b50600436106100d45760003560e01c80635b0fc9c311610081578063cf4088231161005b578063cf4088231461022f578063e985e9c514610242578063f79fe5381461029b57600080fd5b80635b0fc9c3146101f65780635ef2c7f014610209578063a22cb4651461021c57600080fd5b806314ab9038116100b257806314ab90381461017057806316a25cbd146101855780631896f70a146101e357600080fd5b80630178b8bf146100d957806302571be31461013c57806306ab59231461014f575b600080fd5b6101126100e73660046109fc565b60009081526020819052604090206001015473ffffffffffffffffffffffffffffffffffffffff1690565b60405173ffffffffffffffffffffffffffffffffffffffff90911681526020015b60405180910390f35b61011261014a3660046109fc565b6102d3565b61016261015d366004610a3e565b61030e565b604051908152602001610133565b61018361017e366004610a8b565b61046b565b005b6101ca6101933660046109fc565b60009081526020819052604090206001015474010000000000000000000000000000000000000000900467ffffffffffffffff1690565b60405167ffffffffffffffff9091168152602001610133565b6101836101f1366004610ab7565b61057d565b610183610204366004610ab7565b61068e565b610183610217366004610ada565b610799565b61018361022a366004610b31565b6107bb565b61018361023d366004610b6d565b610852565b61028b610250366004610bba565b73ffffffffffffffffffffffffffffffffffffffff918216600090815260016020908152604080832093909416825291909152205460ff1690565b6040519015158152602001610133565b61028b6102a93660046109fc565b60009081526020819052604090205473ffffffffffffffffffffffffffffffffffffffff16151590565b60008181526020819052604081205473ffffffffffffffffffffffffffffffffffffffff163081036103085750600092915050565b92915050565b600083815260208190526040812054849073ffffffffffffffffffffffffffffffffffffffff1633811480610373575073ffffffffffffffffffffffffffffffffffffffff8116600090815260016020908152604080832033845290915290205460ff165b61037c57600080fd5b6040805160208101889052908101869052600090606001604080517fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe08184030181529181528151602092830120600081815292839052912080547fffffffffffffffffffffffff00000000000000000000000000000000000000001673ffffffffffffffffffffffffffffffffffffffff8816179055905060405173ffffffffffffffffffffffffffffffffffffffff86168152869088907fce0457fe73731f824cc272376169235128c118b49d344817417c6d108d155e829060200160405180910390a39695505050505050565b600082815260208190526040902054829073ffffffffffffffffffffffffffffffffffffffff16338114806104d0575073ffffffffffffffffffffffffffffffffffffffff8116600090815260016020908152604080832033845290915290205460ff165b6104d957600080fd5b60405167ffffffffffffffff8416815284907f1d4f9bbfc9cab89d66e1a1562f2233ccbf1308cb4f63de2ead5787adddb8fa689060200160405180910390a25050600091825260208290526040909120600101805467ffffffffffffffff90921674010000000000000000000000000000000000000000027fffffffff0000000000000000ffffffffffffffffffffffffffffffffffffffff909216919091179055565b600082815260208190526040902054829073ffffffffffffffffffffffffffffffffffffffff16338114806105e2575073ffffffffffffffffffffffffffffffffffffffff8116600090815260016020908152604080832033845290915290205460ff165b6105eb57600080fd5b60405173ffffffffffffffffffffffffffffffffffffffff8416815284907f335721b01866dc23fbee8b6b2c7b1e14d6f05c28cd35a2c934239f94095602a09060200160405180910390a2505060009182526020829052604090912060010180547fffffffffffffffffffffffff00000000000000000000000000000000000000001673ffffffffffffffffffffffffffffffffffffffff909216919091179055565b600082815260208190526040902054829073ffffffffffffffffffffffffffffffffffffffff16338114806106f3575073ffffffffffffffffffffffffffffffffffffffff8116600090815260016020908152604080832033845290915290205460ff165b6106fc57600080fd5b600084815260208190526040902080547fffffffffffffffffffffffff00000000000000000000000000000000000000001673ffffffffffffffffffffffffffffffffffffffff851617905560405173ffffffffffffffffffffffffffffffffffffffff8416815284907fd4735d920b0f87494915f556dd9b54c8f309026070caea5c737245152564d2669060200160405180910390a250505050565b60006107a686868661030e565b90506107b381848461086d565b505050505050565b33600081815260016020908152604080832073ffffffffffffffffffffffffffffffffffffffff87168085529083529281902080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff001686151590811790915590519081529192917f17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31910160405180910390a35050565b61085c848461068e565b61086784838361086d565b50505050565b60008381526020819052604090206001015473ffffffffffffffffffffffffffffffffffffffff838116911614610925576000838152602081815260409182902060010180547fffffffffffffffffffffffff00000000000000000000000000000000000000001673ffffffffffffffffffffffffffffffffffffffff8616908117909155915191825284917f335721b01866dc23fbee8b6b2c7b1e14d6f05c28cd35a2c934239f94095602a0910160405180910390a25b60008381526020819052604090206001015467ffffffffffffffff8281167401000000000000000000000000000000000000000090920416146109f7576000838152602081815260409182902060010180547fffffffff0000000000000000ffffffffffffffffffffffffffffffffffffffff167401000000000000000000000000000000000000000067ffffffffffffffff861690810291909117909155915191825284917f1d4f9bbfc9cab89d66e1a1562f2233ccbf1308cb4f63de2ead5787adddb8fa68910160405180910390a25b505050565b600060208284031215610a0e57600080fd5b5035919050565b803573ffffffffffffffffffffffffffffffffffffffff81168114610a3957600080fd5b919050565b600080600060608486031215610a5357600080fd5b8335925060208401359150610a6a60408501610a15565b90509250925092565b803567ffffffffffffffff81168114610a3957600080fd5b60008060408385031215610a9e57600080fd5b82359150610aae60208401610a73565b90509250929050565b60008060408385031215610aca57600080fd5b82359150610aae60208401610a15565b600080600080600060a08688031215610af257600080fd5b8535945060208601359350610b0960408701610a15565b9250610b1760608701610a15565b9150610b2560808701610a73565b90509295509295909350565b60008060408385031215610b4457600080fd5b610b4d83610a15565b915060208301358015158114610b6257600080fd5b809150509250929050565b60008060008060808587031215610b8357600080fd5b84359350610b9360208601610a15565b9250610ba160408601610a15565b9150610baf60608601610a73565b905092959194509250565b60008060408385031215610bcd57600080fd5b610bd683610a15565b9150610aae60208401610a1556fea264697066735822122052edb1e1749301e58c6bd47417a78e4764692b525e17321c226c78541d59a8a664736f6c634300081a0033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100d45760003560e01c80635b0fc9c311610081578063cf4088231161005b578063cf4088231461022f578063e985e9c514610242578063f79fe5381461029b57600080fd5b80635b0fc9c3146101f65780635ef2c7f014610209578063a22cb4651461021c57600080fd5b806314ab9038116100b257806314ab90381461017057806316a25cbd146101855780631896f70a146101e357600080fd5b80630178b8bf146100d957806302571be31461013c57806306ab59231461014f575b600080fd5b6101126100e73660046109fc565b60009081526020819052604090206001015473ffffffffffffffffffffffffffffffffffffffff1690565b60405173ffffffffffffffffffffffffffffffffffffffff90911681526020015b60405180910390f35b61011261014a3660046109fc565b6102d3565b61016261015d366004610a3e565b61030e565b604051908152602001610133565b61018361017e366004610a8b565b61046b565b005b6101ca6101933660046109fc565b60009081526020819052604090206001015474010000000000000000000000000000000000000000900467ffffffffffffffff1690565b60405167ffffffffffffffff9091168152602001610133565b6101836101f1366004610ab7565b61057d565b610183610204366004610ab7565b61068e565b610183610217366004610ada565b610799565b61018361022a366004610b31565b6107bb565b61018361023d366004610b6d565b610852565b61028b610250366004610bba565b73ffffffffffffffffffffffffffffffffffffffff918216600090815260016020908152604080832093909416825291909152205460ff1690565b6040519015158152602001610133565b61028b6102a93660046109fc565b60009081526020819052604090205473ffffffffffffffffffffffffffffffffffffffff16151590565b60008181526020819052604081205473ffffffffffffffffffffffffffffffffffffffff163081036103085750600092915050565b92915050565b600083815260208190526040812054849073ffffffffffffffffffffffffffffffffffffffff1633811480610373575073ffffffffffffffffffffffffffffffffffffffff8116600090815260016020908152604080832033845290915290205460ff165b61037c57600080fd5b6040805160208101889052908101869052600090606001604080517fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe08184030181529181528151602092830120600081815292839052912080547fffffffffffffffffffffffff00000000000000000000000000000000000000001673ffffffffffffffffffffffffffffffffffffffff8816179055905060405173ffffffffffffffffffffffffffffffffffffffff86168152869088907fce0457fe73731f824cc272376169235128c118b49d344817417c6d108d155e829060200160405180910390a39695505050505050565b600082815260208190526040902054829073ffffffffffffffffffffffffffffffffffffffff16338114806104d0575073ffffffffffffffffffffffffffffffffffffffff8116600090815260016020908152604080832033845290915290205460ff165b6104d957600080fd5b60405167ffffffffffffffff8416815284907f1d4f9bbfc9cab89d66e1a1562f2233ccbf1308cb4f63de2ead5787adddb8fa689060200160405180910390a25050600091825260208290526040909120600101805467ffffffffffffffff90921674010000000000000000000000000000000000000000027fffffffff0000000000000000ffffffffffffffffffffffffffffffffffffffff909216919091179055565b600082815260208190526040902054829073ffffffffffffffffffffffffffffffffffffffff16338114806105e2575073ffffffffffffffffffffffffffffffffffffffff8116600090815260016020908152604080832033845290915290205460ff165b6105eb57600080fd5b60405173ffffffffffffffffffffffffffffffffffffffff8416815284907f335721b01866dc23fbee8b6b2c7b1e14d6f05c28cd35a2c934239f94095602a09060200160405180910390a2505060009182526020829052604090912060010180547fffffffffffffffffffffffff00000000000000000000000000000000000000001673ffffffffffffffffffffffffffffffffffffffff909216919091179055565b600082815260208190526040902054829073ffffffffffffffffffffffffffffffffffffffff16338114806106f3575073ffffffffffffffffffffffffffffffffffffffff8116600090815260016020908152604080832033845290915290205460ff165b6106fc57600080fd5b600084815260208190526040902080547fffffffffffffffffffffffff00000000000000000000000000000000000000001673ffffffffffffffffffffffffffffffffffffffff851617905560405173ffffffffffffffffffffffffffffffffffffffff8416815284907fd4735d920b0f87494915f556dd9b54c8f309026070caea5c737245152564d2669060200160405180910390a250505050565b60006107a686868661030e565b90506107b381848461086d565b505050505050565b33600081815260016020908152604080832073ffffffffffffffffffffffffffffffffffffffff87168085529083529281902080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff001686151590811790915590519081529192917f17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31910160405180910390a35050565b61085c848461068e565b61086784838361086d565b50505050565b60008381526020819052604090206001015473ffffffffffffffffffffffffffffffffffffffff838116911614610925576000838152602081815260409182902060010180547fffffffffffffffffffffffff00000000000000000000000000000000000000001673ffffffffffffffffffffffffffffffffffffffff8616908117909155915191825284917f335721b01866dc23fbee8b6b2c7b1e14d6f05c28cd35a2c934239f94095602a0910160405180910390a25b60008381526020819052604090206001015467ffffffffffffffff8281167401000000000000000000000000000000000000000090920416146109f7576000838152602081815260409182902060010180547fffffffff0000000000000000ffffffffffffffffffffffffffffffffffffffff167401000000000000000000000000000000000000000067ffffffffffffffff861690810291909117909155915191825284917f1d4f9bbfc9cab89d66e1a1562f2233ccbf1308cb4f63de2ead5787adddb8fa68910160405180910390a25b505050565b600060208284031215610a0e57600080fd5b5035919050565b803573ffffffffffffffffffffffffffffffffffffffff81168114610a3957600080fd5b919050565b600080600060608486031215610a5357600080fd5b8335925060208401359150610a6a60408501610a15565b90509250925092565b803567ffffffffffffffff81168114610a3957600080fd5b60008060408385031215610a9e57600080fd5b82359150610aae60208401610a73565b90509250929050565b60008060408385031215610aca57600080fd5b82359150610aae60208401610a15565b600080600080600060a08688031215610af257600080fd5b8535945060208601359350610b0960408701610a15565b9250610b1760608701610a15565b9150610b2560808701610a73565b90509295509295909350565b60008060408385031215610b4457600080fd5b610b4d83610a15565b915060208301358015158114610b6257600080fd5b809150509250929050565b60008060008060808587031215610b8357600080fd5b84359350610b9360208601610a15565b9250610ba160408601610a15565b9150610baf60608601610a73565b905092959194509250565b60008060408385031215610bcd57600080fd5b610bd683610a15565b9150610aae60208401610a1556fea264697066735822122052edb1e1749301e58c6bd47417a78e4764692b525e17321c226c78541d59a8a664736f6c634300081a0033",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "immutableReferences": {},
+  "inputSourceName": "project/contracts/registry/RNSRegistry.sol",
+  "devdoc": {
+    "details": "Clean-room re-implementation of ENS's `ENSRegistry` (D-06). The bodies and      storage layout below are RNS-authored, but every observable behavior —      the record model, operator approvals, subnode-owner authorization, the      keccak256 subnode derivation, and the `owner()` self-reference clause —      is byte-for-byte ENS-compatible and frozen by D-07.",
+    "events": {
+      "ApprovalForAll(address,address,bool)": {
+        "params": {
+          "approved": "True when the operator is approved, false when revoked.",
+          "operator": "The address being granted or revoked operator rights.",
+          "owner": "The address whose records the operator may manage."
+        }
+      },
+      "NewOwner(bytes32,bytes32,address)": {
+        "params": {
+          "label": "The labelhash of the subnode being assigned.",
+          "node": "The parent node.",
+          "owner": "The address of the subnode's new owner."
+        }
+      },
+      "NewResolver(bytes32,address)": {
+        "params": {
+          "node": "The node whose resolver changed.",
+          "resolver": "The address of the node's new resolver."
+        }
+      },
+      "NewTTL(bytes32,uint64)": {
+        "params": {
+          "node": "The node whose TTL changed.",
+          "ttl": "The node's new TTL, in seconds."
+        }
+      },
+      "Transfer(bytes32,address)": {
+        "params": {
+          "node": "The node whose ownership changed.",
+          "owner": "The address of the node's new owner."
+        }
+      }
+    },
+    "kind": "dev",
+    "methods": {
+      "owner(bytes32)": {
+        "details": "When the registry itself is the stored owner, `owner()` reads back      `address(0)` — the ENS self-reference clause, preserved per D-07."
+      },
+      "setOwner(bytes32,address)": {
+        "details": "`public` so `setRecord` can call it internally."
+      },
+      "setResolver(bytes32,address)": {
+        "details": "Standalone setter — emits `NewResolver` unconditionally before      storing, matching the frozen ENS behavior."
+      },
+      "setSubnodeOwner(bytes32,bytes32,address)": {
+        "details": "`public` so `setSubnodeRecord` can call it internally. The subnode      is derived as `keccak256(abi.encodePacked(node, label))` — the exact      namehash derivation, frozen by D-07.",
+        "returns": {
+          "_0": "The namehash of the affected subnode."
+        }
+      },
+      "setTTL(bytes32,uint64)": {
+        "details": "Standalone setter — emits `NewTTL` unconditionally before storing,      matching the frozen ENS behavior."
+      }
+    },
+    "stateVariables": {
+      "operators": {
+        "details": "owner -> operator -> whether the operator may manage all of the      owner's nodes."
+      },
+      "records": {
+        "details": "node -> its {owner, resolver, ttl} record."
+      }
+    },
+    "title": "RNSRegistry — the RiseChain Name Service registry.",
+    "version": 1
+  },
+  "evm": {
+    "gasEstimates": {
+      "creation": {
+        "codeDepositCost": "619600",
+        "executionCost": "24904",
+        "totalCost": "644504"
+      },
+      "external": {
+        "isApprovedForAll(address,address)": "infinite",
+        "owner(bytes32)": "2536",
+        "recordExists(bytes32)": "2525",
+        "resolver(bytes32)": "2475",
+        "setApprovalForAll(address,bool)": "26625",
+        "setOwner(bytes32,address)": "30567",
+        "setRecord(bytes32,address,address,uint64)": "infinite",
+        "setResolver(bytes32,address)": "30628",
+        "setSubnodeOwner(bytes32,bytes32,address)": "31241",
+        "setSubnodeRecord(bytes32,bytes32,address,address,uint64)": "infinite",
+        "setTTL(bytes32,uint64)": "30598",
+        "ttl(bytes32)": "2518"
+      },
+      "internal": {
+        "_setOwner(bytes32,address)": "infinite",
+        "_setResolverAndTTL(bytes32,address,uint64)": "infinite"
+      }
+    }
+  },
+  "metadata": "{\"compiler\":{\"version\":\"0.8.26+commit.8a97fa7a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"ApprovalForAll\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"label\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"NewOwner\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"resolver\",\"type\":\"address\"}],\"name\":\"NewResolver\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"ttl\",\"type\":\"uint64\"}],\"name\":\"NewTTL\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"recordExists\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"resolver\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"setApprovalForAll\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"setOwner\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"resolver\",\"type\":\"address\"},{\"internalType\":\"uint64\",\"name\":\"ttl\",\"type\":\"uint64\"}],\"name\":\"setRecord\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"resolver\",\"type\":\"address\"}],\"name\":\"setResolver\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"label\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"setSubnodeOwner\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"label\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"resolver\",\"type\":\"address\"},{\"internalType\":\"uint64\",\"name\":\"ttl\",\"type\":\"uint64\"}],\"name\":\"setSubnodeRecord\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"ttl\",\"type\":\"uint64\"}],\"name\":\"setTTL\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"ttl\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Clean-room re-implementation of ENS's `ENSRegistry` (D-06). The bodies and      storage layout below are RNS-authored, but every observable behavior \\u2014      the record model, operator approvals, subnode-owner authorization, the      keccak256 subnode derivation, and the `owner()` self-reference clause \\u2014      is byte-for-byte ENS-compatible and frozen by D-07.\",\"events\":{\"ApprovalForAll(address,address,bool)\":{\"params\":{\"approved\":\"True when the operator is approved, false when revoked.\",\"operator\":\"The address being granted or revoked operator rights.\",\"owner\":\"The address whose records the operator may manage.\"}},\"NewOwner(bytes32,bytes32,address)\":{\"params\":{\"label\":\"The labelhash of the subnode being assigned.\",\"node\":\"The parent node.\",\"owner\":\"The address of the subnode's new owner.\"}},\"NewResolver(bytes32,address)\":{\"params\":{\"node\":\"The node whose resolver changed.\",\"resolver\":\"The address of the node's new resolver.\"}},\"NewTTL(bytes32,uint64)\":{\"params\":{\"node\":\"The node whose TTL changed.\",\"ttl\":\"The node's new TTL, in seconds.\"}},\"Transfer(bytes32,address)\":{\"params\":{\"node\":\"The node whose ownership changed.\",\"owner\":\"The address of the node's new owner.\"}}},\"kind\":\"dev\",\"methods\":{\"owner(bytes32)\":{\"details\":\"When the registry itself is the stored owner, `owner()` reads back      `address(0)` \\u2014 the ENS self-reference clause, preserved per D-07.\"},\"setOwner(bytes32,address)\":{\"details\":\"`public` so `setRecord` can call it internally.\"},\"setResolver(bytes32,address)\":{\"details\":\"Standalone setter \\u2014 emits `NewResolver` unconditionally before      storing, matching the frozen ENS behavior.\"},\"setSubnodeOwner(bytes32,bytes32,address)\":{\"details\":\"`public` so `setSubnodeRecord` can call it internally. The subnode      is derived as `keccak256(abi.encodePacked(node, label))` \\u2014 the exact      namehash derivation, frozen by D-07.\",\"returns\":{\"_0\":\"The namehash of the affected subnode.\"}},\"setTTL(bytes32,uint64)\":{\"details\":\"Standalone setter \\u2014 emits `NewTTL` unconditionally before storing,      matching the frozen ENS behavior.\"}},\"stateVariables\":{\"operators\":{\"details\":\"owner -> operator -> whether the operator may manage all of the      owner's nodes.\"},\"records\":{\"details\":\"node -> its {owner, resolver, ttl} record.\"}},\"title\":\"RNSRegistry \\u2014 the RiseChain Name Service registry.\",\"version\":1},\"userdoc\":{\"events\":{\"ApprovalForAll(address,address,bool)\":{\"notice\":\"Emitted when an operator is granted or revoked blanket rights         over all of an owner's nodes.\"},\"NewOwner(bytes32,bytes32,address)\":{\"notice\":\"Emitted when the owner of a node assigns a new owner to one of         its subnodes.\"},\"NewResolver(bytes32,address)\":{\"notice\":\"Emitted when the resolver for a node changes.\"},\"NewTTL(bytes32,uint64)\":{\"notice\":\"Emitted when the TTL of a node changes.\"},\"Transfer(bytes32,address)\":{\"notice\":\"Emitted when the owner of a node transfers ownership to a new         account.\"}},\"kind\":\"user\",\"methods\":{\"constructor\":{\"notice\":\"Constructs the registry, seating the deployer as the owner of the         root node `0x0`.\"},\"isApprovedForAll(address,address)\":{\"notice\":\"Returns whether `operator` may manage all of `owner`'s nodes.\"},\"owner(bytes32)\":{\"notice\":\"Returns the address that owns the specified node.\"},\"recordExists(bytes32)\":{\"notice\":\"Returns whether a record exists for the specified node.\"},\"resolver(bytes32)\":{\"notice\":\"Returns the resolver address for the specified node.\"},\"setApprovalForAll(address,bool)\":{\"notice\":\"Grants or revokes blanket operator rights over the caller's nodes.\"},\"setOwner(bytes32,address)\":{\"notice\":\"Transfers ownership of a node to a new address.\"},\"setRecord(bytes32,address,address,uint64)\":{\"notice\":\"Sets the owner, resolver, and TTL for an existing node.\"},\"setResolver(bytes32,address)\":{\"notice\":\"Sets the resolver address for a node.\"},\"setSubnodeOwner(bytes32,bytes32,address)\":{\"notice\":\"Creates or transfers a subnode and assigns its owner.\"},\"setSubnodeRecord(bytes32,bytes32,address,address,uint64)\":{\"notice\":\"Creates or updates a subnode and sets its owner, resolver, and TTL.\"},\"setTTL(bytes32,uint64)\":{\"notice\":\"Sets the TTL, in seconds, for a node.\"},\"ttl(bytes32)\":{\"notice\":\"Returns the TTL, in seconds, of the specified node.\"}},\"notice\":\"The authorization spine of RNS: a flat `node -> {owner, resolver, ttl}`         map that every downstream contract reads and writes through the `RNS`         interface. Holds no business logic \\u2014 pure ownership and authorization.\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"project/contracts/registry/RNSRegistry.sol\":\"RNSRegistry\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000000},\"remappings\":[\"project/:@openzeppelin/contracts/=npm/@openzeppelin/contracts@4.9.3/\"]},\"sources\":{\"project/contracts/registry/RNS.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.26;\\n\\n/// @title RNS \\u2014 RiseChain Name Service registry interface.\\n/// @notice The frozen, ENS-compatible external interface of the RNS registry.\\n///         Every downstream RNS contract (registrar, controllers, resolvers)\\n///         reads and writes the registry through this interface.\\n/// @dev Clean-room re-implementation of ENS's `ENS` interface (D-06). The\\n///      function signatures and the event topic layout below are byte-for-byte\\n///      ENS-compatible and MUST NOT change (D-07): the spec \\u00a75 dependency chain\\n///      assumes an ENS-compatible registry, so this surface is permanently\\n///      frozen. Re-implementation freedom applies only to contract bodies.\\ninterface RNS {\\n    /// @notice Emitted when the owner of a node assigns a new owner to one of\\n    ///         its subnodes.\\n    /// @param node The parent node.\\n    /// @param label The labelhash of the subnode being assigned.\\n    /// @param owner The address of the subnode's new owner.\\n    event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner);\\n\\n    /// @notice Emitted when the owner of a node transfers ownership to a new\\n    ///         account.\\n    /// @param node The node whose ownership changed.\\n    /// @param owner The address of the node's new owner.\\n    event Transfer(bytes32 indexed node, address owner);\\n\\n    /// @notice Emitted when the resolver for a node changes.\\n    /// @param node The node whose resolver changed.\\n    /// @param resolver The address of the node's new resolver.\\n    event NewResolver(bytes32 indexed node, address resolver);\\n\\n    /// @notice Emitted when the TTL of a node changes.\\n    /// @param node The node whose TTL changed.\\n    /// @param ttl The node's new TTL, in seconds.\\n    event NewTTL(bytes32 indexed node, uint64 ttl);\\n\\n    /// @notice Emitted when an operator is granted or revoked blanket rights\\n    ///         over all of an owner's nodes.\\n    /// @param owner The address whose records the operator may manage.\\n    /// @param operator The address being granted or revoked operator rights.\\n    /// @param approved True when the operator is approved, false when revoked.\\n    event ApprovalForAll(\\n        address indexed owner,\\n        address indexed operator,\\n        bool approved\\n    );\\n\\n    /// @notice Sets the owner, resolver, and TTL for an existing node.\\n    function setRecord(\\n        bytes32 node,\\n        address owner,\\n        address resolver,\\n        uint64 ttl\\n    ) external;\\n\\n    /// @notice Creates or updates a subnode and sets its owner, resolver, and TTL.\\n    function setSubnodeRecord(\\n        bytes32 node,\\n        bytes32 label,\\n        address owner,\\n        address resolver,\\n        uint64 ttl\\n    ) external;\\n\\n    /// @notice Creates or transfers a subnode and assigns its owner.\\n    /// @return The namehash of the affected subnode.\\n    function setSubnodeOwner(\\n        bytes32 node,\\n        bytes32 label,\\n        address owner\\n    ) external returns (bytes32);\\n\\n    /// @notice Sets the resolver address for a node.\\n    function setResolver(bytes32 node, address resolver) external;\\n\\n    /// @notice Transfers ownership of a node to a new address.\\n    function setOwner(bytes32 node, address owner) external;\\n\\n    /// @notice Sets the TTL, in seconds, for a node.\\n    function setTTL(bytes32 node, uint64 ttl) external;\\n\\n    /// @notice Grants or revokes blanket operator rights over the caller's nodes.\\n    function setApprovalForAll(address operator, bool approved) external;\\n\\n    /// @notice Returns the address that owns the specified node.\\n    function owner(bytes32 node) external view returns (address);\\n\\n    /// @notice Returns the resolver address for the specified node.\\n    function resolver(bytes32 node) external view returns (address);\\n\\n    /// @notice Returns the TTL, in seconds, of the specified node.\\n    function ttl(bytes32 node) external view returns (uint64);\\n\\n    /// @notice Returns whether a record exists for the specified node.\\n    function recordExists(bytes32 node) external view returns (bool);\\n\\n    /// @notice Returns whether `operator` may manage all of `owner`'s nodes.\\n    function isApprovedForAll(\\n        address owner,\\n        address operator\\n    ) external view returns (bool);\\n}\\n\",\"keccak256\":\"0xdd1e031271acf76c472591c09706b08a36af6b3509ee055f0ecef56601410392\",\"license\":\"MIT\"},\"project/contracts/registry/RNSRegistry.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.26;\\n\\nimport {RNS} from \\\"./RNS.sol\\\";\\n\\n/// @title RNSRegistry \\u2014 the RiseChain Name Service registry.\\n/// @notice The authorization spine of RNS: a flat `node -> {owner, resolver, ttl}`\\n///         map that every downstream contract reads and writes through the `RNS`\\n///         interface. Holds no business logic \\u2014 pure ownership and authorization.\\n/// @dev Clean-room re-implementation of ENS's `ENSRegistry` (D-06). The bodies and\\n///      storage layout below are RNS-authored, but every observable behavior \\u2014\\n///      the record model, operator approvals, subnode-owner authorization, the\\n///      keccak256 subnode derivation, and the `owner()` self-reference clause \\u2014\\n///      is byte-for-byte ENS-compatible and frozen by D-07.\\ncontract RNSRegistry is RNS {\\n    /// @notice The owner, resolver, and TTL stored for a single node.\\n    struct Record {\\n        address owner;\\n        address resolver;\\n        uint64 ttl;\\n    }\\n\\n    /// @dev node -> its {owner, resolver, ttl} record.\\n    mapping(bytes32 => Record) private records;\\n\\n    /// @dev owner -> operator -> whether the operator may manage all of the\\n    ///      owner's nodes.\\n    mapping(address => mapping(address => bool)) private operators;\\n\\n    /// @dev Restricts a mutator to the node's owner or one of its approved\\n    ///      operators. The `require` is intentionally bare (no reason string):\\n    ///      an unauthorized call reverts without a reason, matching the frozen\\n    ///      ENS behavior (D-07) the conformance suite asserts.\\n    modifier authorised(bytes32 node) {\\n        address nodeOwner = records[node].owner;\\n        require(nodeOwner == msg.sender || operators[nodeOwner][msg.sender]);\\n        _;\\n    }\\n\\n    /// @notice Constructs the registry, seating the deployer as the owner of the\\n    ///         root node `0x0`.\\n    constructor() {\\n        records[bytes32(0)].owner = msg.sender;\\n    }\\n\\n    /// @inheritdoc RNS\\n    function setRecord(\\n        bytes32 node,\\n        address owner,\\n        address resolver,\\n        uint64 ttl\\n    ) external virtual override {\\n        setOwner(node, owner);\\n        _setResolverAndTTL(node, resolver, ttl);\\n    }\\n\\n    /// @inheritdoc RNS\\n    function setSubnodeRecord(\\n        bytes32 node,\\n        bytes32 label,\\n        address owner,\\n        address resolver,\\n        uint64 ttl\\n    ) external virtual override {\\n        bytes32 subnode = setSubnodeOwner(node, label, owner);\\n        _setResolverAndTTL(subnode, resolver, ttl);\\n    }\\n\\n    /// @inheritdoc RNS\\n    /// @dev `public` so `setRecord` can call it internally.\\n    function setOwner(\\n        bytes32 node,\\n        address owner\\n    ) public virtual override authorised(node) {\\n        _setOwner(node, owner);\\n        emit Transfer(node, owner);\\n    }\\n\\n    /// @inheritdoc RNS\\n    /// @dev `public` so `setSubnodeRecord` can call it internally. The subnode\\n    ///      is derived as `keccak256(abi.encodePacked(node, label))` \\u2014 the exact\\n    ///      namehash derivation, frozen by D-07.\\n    function setSubnodeOwner(\\n        bytes32 node,\\n        bytes32 label,\\n        address owner\\n    ) public virtual override authorised(node) returns (bytes32) {\\n        bytes32 subnode = keccak256(abi.encodePacked(node, label));\\n        _setOwner(subnode, owner);\\n        emit NewOwner(node, label, owner);\\n        return subnode;\\n    }\\n\\n    /// @inheritdoc RNS\\n    /// @dev Standalone setter \\u2014 emits `NewResolver` unconditionally before\\n    ///      storing, matching the frozen ENS behavior.\\n    function setResolver(\\n        bytes32 node,\\n        address resolver\\n    ) public virtual override authorised(node) {\\n        emit NewResolver(node, resolver);\\n        records[node].resolver = resolver;\\n    }\\n\\n    /// @inheritdoc RNS\\n    /// @dev Standalone setter \\u2014 emits `NewTTL` unconditionally before storing,\\n    ///      matching the frozen ENS behavior.\\n    function setTTL(\\n        bytes32 node,\\n        uint64 ttl\\n    ) public virtual override authorised(node) {\\n        emit NewTTL(node, ttl);\\n        records[node].ttl = ttl;\\n    }\\n\\n    /// @inheritdoc RNS\\n    function setApprovalForAll(\\n        address operator,\\n        bool approved\\n    ) external virtual override {\\n        operators[msg.sender][operator] = approved;\\n        emit ApprovalForAll(msg.sender, operator, approved);\\n    }\\n\\n    /// @inheritdoc RNS\\n    /// @dev When the registry itself is the stored owner, `owner()` reads back\\n    ///      `address(0)` \\u2014 the ENS self-reference clause, preserved per D-07.\\n    function owner(\\n        bytes32 node\\n    ) public view virtual override returns (address) {\\n        address nodeOwner = records[node].owner;\\n        if (nodeOwner == address(this)) {\\n            return address(0);\\n        }\\n        return nodeOwner;\\n    }\\n\\n    /// @inheritdoc RNS\\n    function resolver(\\n        bytes32 node\\n    ) public view virtual override returns (address) {\\n        return records[node].resolver;\\n    }\\n\\n    /// @inheritdoc RNS\\n    function ttl(bytes32 node) public view virtual override returns (uint64) {\\n        return records[node].ttl;\\n    }\\n\\n    /// @inheritdoc RNS\\n    function recordExists(\\n        bytes32 node\\n    ) public view virtual override returns (bool) {\\n        return records[node].owner != address(0);\\n    }\\n\\n    /// @inheritdoc RNS\\n    function isApprovedForAll(\\n        address owner,\\n        address operator\\n    ) external view virtual override returns (bool) {\\n        return operators[owner][operator];\\n    }\\n\\n    /// @dev Writes a node's owner without emitting an event \\u2014 callers emit the\\n    ///      appropriate `Transfer` / `NewOwner` event themselves.\\n    function _setOwner(bytes32 node, address owner) internal virtual {\\n        records[node].owner = owner;\\n    }\\n\\n    /// @dev Sets the resolver and TTL for a node, emitting `NewResolver` /\\n    ///      `NewTTL` ONLY when the value actually changes. This conditional-emit\\n    ///      behavior backs `setRecord` / `setSubnodeRecord` and differs from the\\n    ///      standalone `setResolver` / `setTTL` setters \\u2014 both behaviors are\\n    ///      observable and frozen by D-07.\\n    function _setResolverAndTTL(\\n        bytes32 node,\\n        address resolver,\\n        uint64 ttl\\n    ) internal {\\n        if (resolver != records[node].resolver) {\\n            records[node].resolver = resolver;\\n            emit NewResolver(node, resolver);\\n        }\\n\\n        if (ttl != records[node].ttl) {\\n            records[node].ttl = ttl;\\n            emit NewTTL(node, ttl);\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x6f9d8c44316e46771a03859828d4ba0e42d41c1fcb50f369de97fec53585d93a\",\"license\":\"MIT\"}},\"version\":1}",
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 1036,
+        "contract": "project/contracts/registry/RNSRegistry.sol:RNSRegistry",
+        "label": "records",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_bytes32,t_struct(Record)1030_storage)"
+      },
+      {
+        "astId": 1043,
+        "contract": "project/contracts/registry/RNSRegistry.sol:RNSRegistry",
+        "label": "operators",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_address,t_mapping(t_address,t_bool))"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => mapping(address => bool))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_address,t_bool)"
+      },
+      "t_mapping(t_bytes32,t_struct(Record)1030_storage)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => struct RNSRegistry.Record)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Record)1030_storage"
+      },
+      "t_struct(Record)1030_storage": {
+        "encoding": "inplace",
+        "label": "struct RNSRegistry.Record",
+        "members": [
+          {
+            "astId": 1025,
+            "contract": "project/contracts/registry/RNSRegistry.sol:RNSRegistry",
+            "label": "owner",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 1027,
+            "contract": "project/contracts/registry/RNSRegistry.sol:RNSRegistry",
+            "label": "resolver",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address"
+          },
+          {
+            "astId": 1029,
+            "contract": "project/contracts/registry/RNSRegistry.sol:RNSRegistry",
+            "label": "ttl",
+            "offset": 20,
+            "slot": "1",
+            "type": "t_uint64"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_uint64": {
+        "encoding": "inplace",
+        "label": "uint64",
+        "numberOfBytes": "8"
+      }
+    }
+  },
+  "userdoc": {
+    "events": {
+      "ApprovalForAll(address,address,bool)": {
+        "notice": "Emitted when an operator is granted or revoked blanket rights         over all of an owner's nodes."
+      },
+      "NewOwner(bytes32,bytes32,address)": {
+        "notice": "Emitted when the owner of a node assigns a new owner to one of         its subnodes."
+      },
+      "NewResolver(bytes32,address)": {
+        "notice": "Emitted when the resolver for a node changes."
+      },
+      "NewTTL(bytes32,uint64)": {
+        "notice": "Emitted when the TTL of a node changes."
+      },
+      "Transfer(bytes32,address)": {
+        "notice": "Emitted when the owner of a node transfers ownership to a new         account."
+      }
+    },
+    "kind": "user",
+    "methods": {
+      "constructor": {
+        "notice": "Constructs the registry, seating the deployer as the owner of the         root node `0x0`."
+      },
+      "isApprovedForAll(address,address)": {
+        "notice": "Returns whether `operator` may manage all of `owner`'s nodes."
+      },
+      "owner(bytes32)": {
+        "notice": "Returns the address that owns the specified node."
+      },
+      "recordExists(bytes32)": {
+        "notice": "Returns whether a record exists for the specified node."
+      },
+      "resolver(bytes32)": {
+        "notice": "Returns the resolver address for the specified node."
+      },
+      "setApprovalForAll(address,bool)": {
+        "notice": "Grants or revokes blanket operator rights over the caller's nodes."
+      },
+      "setOwner(bytes32,address)": {
+        "notice": "Transfers ownership of a node to a new address."
+      },
+      "setRecord(bytes32,address,address,uint64)": {
+        "notice": "Sets the owner, resolver, and TTL for an existing node."
+      },
+      "setResolver(bytes32,address)": {
+        "notice": "Sets the resolver address for a node."
+      },
+      "setSubnodeOwner(bytes32,bytes32,address)": {
+        "notice": "Creates or transfers a subnode and assigns its owner."
+      },
+      "setSubnodeRecord(bytes32,bytes32,address,address,uint64)": {
+        "notice": "Creates or updates a subnode and sets its owner, resolver, and TTL."
+      },
+      "setTTL(bytes32,uint64)": {
+        "notice": "Sets the TTL, in seconds, for a node."
+      },
+      "ttl(bytes32)": {
+        "notice": "Returns the TTL, in seconds, of the specified node."
+      }
+    },
+    "notice": "The authorization spine of RNS: a flat `node -> {owner, resolver, ttl}`         map that every downstream contract reads and writes through the `RNS`         interface. Holds no business logic — pure ownership and authorization.",
+    "version": 1
+  },
+  "argsData": "0x",
+  "transaction": {
+    "hash": "0x33f4c1f22b4ed8da3cb372811da3a131c5ee7f5d4a9e1e6142195c97c03ded9f",
+    "nonce": "0x0",
+    "origin": "0xfe8ed71eb54a95b7f35737aa9f34114e361e6ad1"
+  },
+  "receipt": {
+    "blockHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "blockNumber": "0x2a8fb7e",
+    "transactionIndex": "0x132"
+  }
+}
