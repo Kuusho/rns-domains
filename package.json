@@ -7,7 +7,10 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "bun run compile && NODE_OPTIONS=\"--disable-warning=ExperimentalWarning\" vitest run",
-    "deploy:local": "hardhat deploy --network localhost --skip-prompts"
+    "deploy:local": "hardhat deploy --network localhost --skip-prompts",
+    "deploy:testnet": "hardhat deploy --network riseTestnet --skip-prompts",
+    "verify:testnet": "node --experimental-strip-types --no-warnings scripts/verify-testnet-deploy.ts",
+    "verify:testnet:live": "node --experimental-strip-types --no-warnings scripts/verify-testnet-deploy.ts --live"
   },
   "devDependencies": {
     "@ensdomains/hardhat-chai-matchers-viem": "^0.1.14",

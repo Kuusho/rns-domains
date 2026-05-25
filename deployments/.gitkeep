@@ -1,0 +1,7 @@
+# `deployments/` holds rocketh deploy artifacts for real networks (e.g.
+# deployments/riseTestnet/). The `deployments/localhost/` subdir is gitignored
+# (ephemeral local-node store — regenerated on every `bun run deploy:local`);
+# everything else under here is persisted deploy state and committed.
+#
+# This .gitkeep ensures the directory exists in fresh clones even before any
+# real-network deploy has populated it.

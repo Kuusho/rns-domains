@@ -15,6 +15,6 @@
       "@rocketh": ["./rocketh.ts"]
     }
   },
-  "include": ["./test/**/*.ts", "./deploy/**/*.ts", "./hardhat.config.ts"],
+  "include": ["./test/**/*.ts", "./deploy/**/*.ts", "./scripts/**/*.ts", "./hardhat.config.ts"],
   "files": ["hardhat.config.ts"]
 }
