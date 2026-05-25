@@ -370,13 +370,29 @@ async function runLiveExercise(opts: {
   }
   pass('setSubnodeOwner tx', `mined in block ${receipt.blockNumber} (${txHash})`)
 
-  // Read it back from the registry
-  const newOwner = (await publicClient.readContract({
-    address: registry.address,
-    abi: registry.abi as never,
-    functionName: 'owner',
-    args: [nodeHash],
-  })) as Address
+  // Read it back from the registry. Hosted RPC pools (Alchemy/Infura/QuickNode/...)
+  // can briefly serve reads from a node that hasn't yet seen the just-mined
+  // block — even after `waitForTransactionReceipt` returns. Retry a few times
+  // with backoff so a transient read-after-write lag doesn't flip a green run
+  // to red. Stop as soon as a non-zero owner comes back.
+  let newOwner: Address = zeroAddress
+  const maxAttempts = 6
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    newOwner = (await publicClient.readContract({
+      address: registry.address,
+      abi: registry.abi as never,
+      functionName: 'owner',
+      args: [nodeHash],
+    })) as Address
+    if (newOwner !== zeroAddress) break
+    if (attempt < maxAttempts) {
+      const delayMs = 500 * attempt // 500, 1000, 1500, 2000, 2500 ms
+      console.log(
+        `  (read-after-write: owner returned 0x0, attempt ${attempt}/${maxAttempts} — retrying in ${delayMs}ms)`,
+      )
+      await new Promise((r) => setTimeout(r, delayMs))
+    }
+  }
   if (getAddress(newOwner) !== getAddress(account.address)) {
     fail(
       `RNSRegistry.owner(namehash('${label}'))`,
