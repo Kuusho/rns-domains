@@ -27,14 +27,28 @@
 //      per-task sampling loop per VALIDATION.md, run during the Task 3
 //      human-verify checkpoint.
 //
-// Configuration (env vars):
-//   RISE_TESTNET_RPC — RPC URL. Defaults to https://testnet.riselabs.xyz
-//                      (the canonical public endpoint per research A3). Set
-//                      this if you want to point at Alchemy / another provider.
+// Configuration — env vs keystore:
+//   Each of RISE_TESTNET_RPC and DEPLOYER_KEY is resolved with an env-FIRST
+//   policy:
+//     1. process.env[KEY] if present and non-empty AND it passes a value-
+//        shape gate (URL for RPC; 0x + 64 hex chars for DEPLOYER_KEY). Used
+//        directly — the keystore is skipped entirely.
+//     2. Otherwise `bunx hardhat keystore get <KEY>` is tried; the captured
+//        stdout is only used if exit code == 0 AND it passes the same value-
+//        shape gate (this rejects the "No production keystore found..."
+//        error message hardhat prints to stdout on a missing store).
+//     3. Otherwise a clear error names the variable, both attempted sources,
+//        and the two recovery paths (`hardhat keystore set KEY` in a real
+//        TTY, or inline-export the env var before invoking this script).
+//
+//   RISE_TESTNET_RPC — RPC URL. Defaults to https://testnet.riselabs.xyz only
+//                      for the read-only / default-banner display; the env-
+//                      first resolver is invoked for the actual connect.
 //   DEPLOYER_KEY     — 0x-prefixed private key. REQUIRED for --live mode only.
 //                      Read-only mode never touches it.
 // ----------------------------------------------------------------------------
 
+import { spawnSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
@@ -109,8 +123,98 @@ function fail(label: string, detail: string): never {
   throw new Error(`${label}: ${detail}`)
 }
 
+// ----------------------------------------------------------------------------
+// Env-first credential resolution
+// ----------------------------------------------------------------------------
+// Resolves a config value (RISE_TESTNET_RPC, DEPLOYER_KEY) from the env, with
+// a keystore fallback. Both sources are gated by a shape validator — this
+// rejects e.g. hardhat's "No production keystore found..." error message,
+// which it prints to stdout (not stderr) and would otherwise be silently
+// substituted as the resolved value.
+
+type ValueShape = 'rpc' | 'privateKey'
+
+function isValidShape(kind: ValueShape, value: string): boolean {
+  if (!value) return false
+  const trimmed = value.trim()
+  if (!trimmed) return false
+  if (kind === 'rpc') {
+    if (!/^https?:\/\//i.test(trimmed)) return false
+    try {
+      new URL(trimmed)
+      return true
+    } catch {
+      return false
+    }
+  }
+  // kind === 'privateKey'
+  return /^0x[0-9a-fA-F]{64}$/.test(trimmed)
+}
+
+function tryEnv(envKey: string, kind: ValueShape): string | null {
+  const raw = process.env[envKey]
+  if (!raw) return null
+  return isValidShape(kind, raw) ? raw.trim() : null
+}
+
+function tryKeystore(envKey: string, kind: ValueShape): string | null {
+  // `bunx hardhat keystore get <KEY>` — capture BOTH stdout and exit code.
+  // If exit code != 0, the keystore is unavailable (missing store, missing
+  // key, decryption failure, etc.). If exit code == 0 but the stdout payload
+  // doesn't shape-validate (e.g. "No production keystore found..."), treat
+  // it as unavailable too.
+  let result
+  try {
+    result = spawnSync('bunx', ['hardhat', 'keystore', 'get', envKey], {
+      encoding: 'utf-8',
+      // Don't inherit stdio — we want to inspect stdout, and we don't want
+      // hardhat's prompts to spray into our own output.
+      stdio: ['ignore', 'pipe', 'pipe'],
+    })
+  } catch {
+    return null
+  }
+  if (result.status !== 0) return null
+  const stdout = (result.stdout ?? '').trim()
+  // The reference failure mode we explicitly guard against:
+  if (/No production keystore found/i.test(stdout)) return null
+  return isValidShape(kind, stdout) ? stdout : null
+}
+
+function resolveConfigValue(envKey: string, kind: ValueShape): string {
+  const fromEnv = tryEnv(envKey, kind)
+  if (fromEnv) return fromEnv
+  const fromKeystore = tryKeystore(envKey, kind)
+  if (fromKeystore) return fromKeystore
+
+  const shapeHint =
+    kind === 'rpc'
+      ? 'an http(s) URL'
+      : 'a 0x-prefixed 32-byte hex string (0x + 64 hex chars)'
+  console.error(
+    `\n${envKey} unavailable: not in process.env, and keystore lookup failed.`,
+  )
+  console.error(`  expected shape: ${shapeHint}`)
+  console.error(
+    `  (no usable encrypted store at ~/.config/hardhat-nodejs/keystore.json — run`,
+  )
+  console.error(
+    `   \`bunx hardhat keystore set ${envKey}\` in a real TTY, or export`,
+  )
+  console.error(`   ${envKey} inline before invoking this script)`)
+  process.exit(1)
+}
+
+function hostOf(url: string): string {
+  try {
+    return new URL(url).host
+  } catch {
+    return '<invalid-url>'
+  }
+}
+
 function getRpcUrl(): string {
-  return process.env.RISE_TESTNET_RPC ?? DEFAULT_RPC
+  return resolveConfigValue('RISE_TESTNET_RPC', 'rpc')
 }
 
 // ----------------------------------------------------------------------------
@@ -121,8 +225,9 @@ async function runReadOnlyChecks(opts: {
   registry: Deployment
   root: Deployment
   securityController: Deployment
+  rpc: string
 }) {
-  const { registry, root, securityController } = opts
+  const { registry, root, securityController, rpc } = opts
 
   // (a) Three non-zero addresses
   console.log('\n[1/2] Artifact integrity — three non-zero addresses')
@@ -139,21 +244,22 @@ async function runReadOnlyChecks(opts: {
 
   // (b) RNSRegistry.owner(zeroHash) on testnet returns RNSRoot's address
   console.log('\n[2/2] On-chain root-ownership — RNSRegistry.owner(0x0) == RNSRoot')
-  const rpc = getRpcUrl()
   const publicClient = createPublicClient({
     chain: riseTestnet,
     transport: http(rpc),
   })
 
-  // Sanity-check the RPC actually points at chainId 11155931.
+  // Sanity-check the RPC actually points at chainId 11155931. We log only the
+  // host of the RPC URL (not the full URL) — the URL may carry a provider
+  // API key (Alchemy etc.) we don't want pasted back into chat or commits.
   const observedChainId = await publicClient.getChainId()
   if (observedChainId !== CHAIN_ID) {
     fail(
       'RPC chainId sanity check',
-      `expected ${CHAIN_ID}, got ${observedChainId} from ${rpc}`,
+      `expected ${CHAIN_ID}, got ${observedChainId} from host ${hostOf(rpc)}`,
     )
   }
-  pass('RPC chainId', `${observedChainId} via ${rpc}`)
+  pass('RPC chainId', `${observedChainId} via ${hostOf(rpc)}`)
 
   const ownerOfRoot = (await publicClient.readContract({
     address: registry.address,
@@ -173,26 +279,19 @@ async function runReadOnlyChecks(opts: {
 async function runLiveExercise(opts: {
   registry: Deployment
   root: Deployment
+  rpc: string
 }) {
-  const { registry, root } = opts
+  const { registry, root, rpc } = opts
 
   console.log(
     '\n[3/3] Live exercise — RNSRoot.setSubnodeOwner(labelhash("smoke"), deployer)',
   )
 
-  const deployerKey = process.env.DEPLOYER_KEY
-  if (!deployerKey) {
-    fail(
-      '--live mode',
-      'DEPLOYER_KEY env var not set. Export it (or `bunx hardhat run` via keystore) and re-run.',
-    )
-  }
-  const normalisedKey = (
-    deployerKey.startsWith('0x') ? deployerKey : `0x${deployerKey}`
-  ) as Hex
+  // Env-first resolution — same gates as the RPC URL. The validator already
+  // enforces the 0x + 64 hex shape, so we don't need a separate normaliser.
+  const deployerKey = resolveConfigValue('DEPLOYER_KEY', 'privateKey') as Hex
 
-  const rpc = getRpcUrl()
-  const account = privateKeyToAccount(normalisedKey)
+  const account = privateKeyToAccount(deployerKey)
   const publicClient = createPublicClient({
     chain: riseTestnet,
     transport: http(rpc),
@@ -278,10 +377,13 @@ async function main() {
   // --read-only is the default; accept it explicitly for plan-clarity:
   //   node scripts/verify-testnet-deploy.ts --read-only
 
+  // Resolve the RPC up front (env-first; keystore fallback). We log only its
+  // host — never the full URL — because it may embed a provider API key.
+  const resolvedRpc = getRpcUrl()
   console.log('---')
   console.log('RNS testnet smoke-deploy verification')
   console.log(`  chainId      : ${CHAIN_ID}`)
-  console.log(`  rpc          : ${getRpcUrl()}`)
+  console.log(`  rpc host     : ${hostOf(resolvedRpc)}`)
   console.log(`  deployments  : ${DEPLOYMENTS_DIR}`)
   console.log(`  mode         : ${live ? 'LIVE (state-changing)' : 'read-only'}`)
   console.log('---')
@@ -290,10 +392,10 @@ async function main() {
   const root = readDeployment('RNSRoot')
   const securityController = readDeployment('RNSRootSecurityController')
 
-  await runReadOnlyChecks({ registry, root, securityController })
+  await runReadOnlyChecks({ registry, root, securityController, rpc: resolvedRpc })
 
   if (live) {
-    await runLiveExercise({ registry, root })
+    await runLiveExercise({ registry, root, rpc: resolvedRpc })
   }
 
   if (process.exitCode && process.exitCode !== 0) {
