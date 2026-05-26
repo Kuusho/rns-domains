@@ -63,7 +63,7 @@ resolution, `UniversalResolver`). It is **not** ported.
 | 3 — The .rise Registrar | ERC-721 registrar interface(s) for `RiseRegistrar` | `contracts/ethregistrar/` (or RNS-renamed registrar subdir) |
 | 4 — Resolution | resolver profile interfaces (`IAddrResolver`, `ITextResolver`, `IContentHashResolver`, ABI/interface/name/pubkey/dns/data mixins) | `contracts/resolvers/profiles/` |
 | 5 — Pricing | `IPriceOracle` | `contracts/registrar-controller/` |
-| 6 — Public Registration | reverse-registrar / controller interfaces | reverse-registrar + controller subdirs |
+| 6 — Public Registration | `IRiseRegistrarController`, `IReverseRegistrar`, `IDefaultReverseRegistrar`, `IStandaloneReverseRegistrar` | `contracts/registrar-controller/`, `contracts/reverseregistrar/` |
 | 7 — Convenience *(optional)* | `UniversalResolver` / batch-gateway interfaces | convenience subdir |
 | 8 — Name Wrapping *(optional)* | `NameWrapper` / ERC-1155 fuse interfaces | name-wrapper subdir |
 

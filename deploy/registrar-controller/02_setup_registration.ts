@@ -90,6 +90,19 @@ export default deployScript(
       'DefaultReverseRegistrar:contract',
       'RegistrarSecurityController:contract',
       'AddrReverse:setup',
+      // RiseRegistrar:setup is required — Phase 3's activation gate must have
+      // already transferred registrar ownership to RegistrarSecurityController,
+      // otherwise sc.addRegistrarController reverts because SC isn't yet the
+      // registrar's owner. Without this dep, rocketh's lazy resolver skips the
+      // Phase 3 setup script and the deploy chain breaks at this script.
+      'RiseRegistrar:setup',
+      // Resolution:setup completes the .rise resolver wiring (Phase 4
+      // activation gate). REG-13 itself doesn't need it, but the full Phase
+      // 2-6 deploy:local chain must include it for the controller's
+      // resolver-multicall path (REG-04) to work post-deploy. Pulling it in
+      // via this script's deps makes `bun run deploy:local` execute the full
+      // 16-script chain end-to-end.
+      'Resolution:setup',
     ],
   },
 )
