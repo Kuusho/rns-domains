@@ -30,14 +30,14 @@ service must work.
 - [x] Repo scaffold — Hardhat 3 + Bun project; shared utility libraries (`NameCoder`, `BytesUtils`, `HexUtils`, `StringUtils`, `ENSIP19`); per-phase interface-porting policy; Vitest + viem test harness — *Validated in Phase 1: Repo Scaffold & Shared Libraries (`bun run compile` clean, 350/350 utility tests pass)*
 - [x] Naming layer — `RNSRegistry` + `RNS` (frozen interface) + `RNSControllable` + `RNSRoot` + `RNSRootSecurityController`; root-node ownership wired to `RNSRoot`; `rocketh` deploy harness; testnet smoke deploy live — *Validated in Phase 2: Naming Layer Foundation (372/372 local conformance suite passes + on-chain D-05 smoke deploy on RISE testnet chainId 11155931, contracts at `0x1E413C…fdEDcAB` / `0x9709C4…6685` / `0x8a3578…aAaCA`; `Registry.owner(0x0) == RNSRoot` and `setSubnodeOwner` round-trip confirmed; CORE-01..05 closed)*
 - [x] `.rise` registrar — `RiseRegistrar` (ERC-721 `"RiseChain Name Service"` / `".rise"`, `baseNode = namehash('rise')`), `RegistrarSecurityController` (un-prefixed, inherits `RNSControllable`); `.rise` TLD assigned via root-mediated activation gate — *Validated in Phase 3: The .rise Registrar (33/33 Phase-3 tests + 372/372 prior-phase regression suite green; operator-confirmed `bun run deploy:local` with `TLD-01: PASS ✓` against fresh `hardhat node`; Pitfall 2 enforced — `grep -c "account: owner" deploy/riseregistrar/00_setup_rise_registrar.ts == 0`; TLD-01..08 closed; code review 0 critical / 2 warning / 4 info)*
+- [x] Resolution — resolver `profiles/` (9 mixins + ExtendedResolver) + `PublicResolver` (3-slot constructor, 2-tier auth per D-06, `ReverseClaimer` dropped per D-07) + `RiseOwnedResolver` (single-owner, ENSIP-10 dispatcher, `DataResolver` excluded per Pitfall 9); `.rise` node's resolver slot wired via `RegistrarSecurityController.setRegistrarResolver` signed by `owner` (Pitfall 2) — *Validated in Phase 4: Resolution (190/190 Phase-4 tests + 405/405 prior-phase regression suite green; operator-confirmed `bun run deploy:local` with `rns.resolver(namehash('rise')) == 0xCf7Ed3AccA…fb0Fc9 == RiseOwnedResolver.address` on local Hardhat node — RES-07 closed; RES-01..07 closed; code review 0 critical / 2 warning / 6 info — all reference-port-fidelity inheritance)*
+- [x] Pricing — `RisePriceOracle`: flat, owner-settable, native-token-denominated per-length pricing satisfying `IPriceOracle` (interface ported to `contracts/registrar-controller/` per D-07; `uint256[5] rentPrices` storage with named `rentPrice(uint256)` getter; `setRentPrices` bulk setter w/ `RentPriceChanged` snapshot event; `_premium` virtual hook reserved; ERC-165 advertising `IERC165 || IPriceOracle`; deploy script signs deploy + `transferOwnership(owner)` with `deployer` per D-11; zero Chainlink/USD references) — *Validated in Phase 5: Pricing (25/25 unit tests + 5/5 IntegrationPricing tests + 595/595 prior-phase regression suite green; in-process `loadAndExecuteDeployments` evidence accepted as closure per user decision 2026-05-26 — testnet deploy deferred to Phase 6; PRICE-01..05 closed; code review 0 critical / 0 warning / 3 info — all reference-port-fidelity stylistic notes)*
 
 ### Active
 
 <!-- Current scope. Building toward these. The phased fork plan (spec §7). -->
 
 
-- [ ] Resolution — resolver `profiles/`, `PublicResolver`, `OwnedResolver` (for the `.rise` node)
-- [ ] Pricing — `RisePriceOracle`: flat, owner-settable, native-token-denominated per-length pricing satisfying `IPriceOracle`
 - [ ] Reverse resolution — `ReverseRegistrar` + `DefaultReverseRegistrar` (the simple `addr.reverse` model)
 - [ ] Public registration — `RiseRegistrarController`: commit-reveal, payment, renewal, optional resolver-record multicall, optional reverse-record setup, **reserved-name list + launch allowlist**
 - [ ] Convenience layer — `BatchGatewayProvider` + `UniversalResolver`, `StaticBulkRenewal` (Phase 6, optional)
@@ -93,8 +93,9 @@ requirements with REQ-IDs live in `.planning/REQUIREMENTS.md`.
 - **Build order**: contracts must be created in the spec §5 dependency-chain order. Nothing
   can be deployed before its dependency.
 - **Phase gates**: each phase compiles, deploys, and passes its "Done when" verification gate
-  before the next starts. Phases 0–4 verify on a **local Hardhat network**; Phase 5 (MVP
-  complete) deploys to the **RiseChain testnet** for end-to-end verification.
+  before the next starts. Phases 1–5 verify on a **local Hardhat network** (Phase 5 closes on
+  in-process `loadAndExecuteDeployments` evidence — boundary revised 2026-05-26); Phase 6
+  (MVP complete) deploys to the **RiseChain testnet** for end-to-end verification.
 - **RiseChain fork edits**: `.eth → .rise` (TLD strings, `ETH_NODE` constant recompute,
   deploy-script namehashes); drop the Chainlink dependency for native-token pricing; keep the
   simple `addr.reverse` reverse model; audit/replace hardcoded addresses (Chainlink feed,
@@ -113,9 +114,9 @@ requirements with REQ-IDs live in `.planning/REQUIREMENTS.md`.
 | Phased fork — re-create contract-by-contract, never copy wholesale | Each phase compiles/deploys/verifies; RiseChain edits applied in a controlled way per contract | — Pending |
 | Full 8-phase roadmap — Phases 6 (UniversalResolver/bulk renewal) and 7 (NameWrapper) included, flagged optional | Whole arc visible upfront; 6–7 remain post-MVP and conditional | — Pending |
 | `RiseRegistrarController` gains a reserved-name list **and** a launch allowlist | RNS aspires to be the de-facto canonical service — protect brand/system names from a launch land-grab and stage a controlled launch window | — Pending |
-| `RisePriceOracle` — flat, owner-settable, native-token-denominated pricing; premium auction deferred | RiseChain has no Chainlink feed; flat pricing satisfies `IPriceOracle`; the exponential post-expiry premium is Phase 6 work | — Pending |
+| `RisePriceOracle` — flat, owner-settable, native-token-denominated pricing; premium auction deferred | RiseChain has no Chainlink feed; flat pricing satisfies `IPriceOracle`; the exponential post-expiry premium is Phase 6 work | — Validated in Phase 5 |
 | Keep `RootSecurityController` + `RegistrarSecurityController` | Small contracts; emergency controls (TLD removal, controller gating) that pair naturally with the controlled-launch policy | — Pending |
-| Phases 0–4 verify on local Hardhat; Phase 5 deploys to RiseChain testnet | Fast, deterministic local iteration; one real testnet deploy proves the end-to-end story at the MVP gate | — Pending |
+| Phases 1–5 verify on local Hardhat; Phase 6 (MVP gate) deploys to RiseChain testnet | Boundary revised 2026-05-26 (was: "Phase 5 deploys to testnet"). Phase 5 closes on in-process `loadAndExecuteDeployments` evidence; one real testnet deploy proves end-to-end at the MVP gate (Phase 6) where the controller, payment, and reverse registrar all converge | — Pending (Phase 6) |
 | Native-token pricing instead of Chainlink USD conversion | No Chainlink ETH/USD feed exists at the hardcoded mainnet address on RiseChain | — Pending |
 
 ## Evolution
@@ -136,4 +137,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-25 after Phase 3 (The .rise Registrar) completion — 3/3 plans shipped, TLD-01..08 verified locally (33 new tests + 372/372 regression) + operator-confirmed `bun run deploy:local` TLD-01 PASS on real localhost RPC*
+*Last updated: 2026-05-26 after Phase 5 (Pricing) completion — 4/4 plans shipped, PRICE-01..05 verified locally (25 unit + 5 integration tests + 595/595 prior-phase regression = 625/625 in-process green) via `loadAndExecuteDeployments` rocketh-in-test fixture; testnet-deploy boundary revised — Phase 5 closes on in-process evidence, testnet deploy moves to Phase 6 (MVP gate)*
