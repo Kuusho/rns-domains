@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RNS — Solar Genesis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --night: #0A0E27;
+  --indigo: #3D1B6E;
+  --dawn: #C44536;
+  --amber: #F4A261;
+  --apex: #FFEFD5;
+  --apex-dim: rgba(255, 239, 213, 0.65);
+  --apex-mute: rgba(255, 239, 213, 0.32);
+  --hair: rgba(255, 239, 213, 0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: var(--night);
+  color: var(--apex);
+  font-family: "Inter", system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+body {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 110%, rgba(244, 162, 97, 0.35) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 50% 95%, rgba(196, 69, 54, 0.45) 0%, transparent 55%),
+    radial-gradient(ellipse 90% 70% at 50% 130%, rgba(61, 27, 110, 0.5) 0%, transparent 70%),
+    var(--night);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* Top nav */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32px 64px;
+  position: relative;
+  z-index: 10;
+}
+nav .mark {
+  font-family: "Newsreader", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 22px;
+  letter-spacing: 0.02em;
+}
+nav .mark span { color: var(--amber); font-style: normal; font-weight: 500; }
+nav ul { display: flex; list-style: none; gap: 36px; }
+nav a {
+  color: var(--apex-dim);
+  text-decoration: none;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  transition: color 0.4s ease;
+}
+nav a:hover { color: var(--apex); }
+nav .connect {
+  background: transparent;
+  border: 1px solid var(--apex-mute);
+  color: var(--apex);
+  padding: 10px 24px;
+  border-radius: 999px;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+nav .connect:hover {
+  border-color: var(--amber);
+  background: rgba(244, 162, 97, 0.08);
+}
+
+/* Hero */
+.hero {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 24px;
+  position: relative;
+}
+.hero .kicker {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  color: var(--amber);
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  animation: rise 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.hero h1 {
+  font-family: "Newsreader", serif;
+  font-weight: 200;
+  font-size: clamp(56px, 10vw, 128px);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  margin-bottom: 32px;
+  animation: rise 1.4s 0.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.hero h1 em {
+  font-style: italic;
+  font-weight: 300;
+  background: linear-gradient(180deg, var(--amber) 0%, var(--dawn) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero p {
+  font-size: 18px;
+  color: var(--apex-dim);
+  max-width: 540px;
+  line-height: 1.6;
+  margin-bottom: 56px;
+  animation: rise 1.4s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* Search */
+.search {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 239, 213, 0.04);
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  padding: 8px 8px 8px 32px;
+  width: 100%;
+  max-width: 520px;
+  backdrop-filter: blur(20px);
+  transition: all 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+  animation: rise 1.4s 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.search:focus-within {
+  border-color: var(--amber);
+  background: rgba(244, 162, 97, 0.06);
+  box-shadow: 0 0 80px rgba(244, 162, 97, 0.15);
+}
+.search input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--apex);
+  font-family: "Newsreader", serif;
+  font-size: 22px;
+  font-weight: 300;
+}
+.search input::placeholder { color: var(--apex-mute); font-style: italic; }
+.search .suffix {
+  color: var(--amber);
+  font-family: "Newsreader", serif;
+  font-style: italic;
+  font-size: 22px;
+  padding-right: 16px;
+}
+.search button {
+  background: var(--amber);
+  color: var(--night);
+  border: none;
+  padding: 14px 28px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  font-family: "Inter", sans-serif;
+}
+.search button:hover {
+  background: var(--apex);
+  transform: translateY(-1px);
+}
+
+/* Sections */
+section {
+  padding: 120px 64px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.section-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  color: var(--amber);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.section-h2 {
+  font-family: "Newsreader", serif;
+  font-weight: 200;
+  font-size: clamp(36px, 5vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin-bottom: 32px;
+  max-width: 720px;
+}
+.section-h2 em { font-style: italic; color: var(--amber); }
+
+/* Available state card */
+.name-card {
+  background: rgba(255, 239, 213, 0.03);
+  border: 1px solid var(--hair);
+  border-radius: 24px;
+  padding: 48px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+.name-card::before {
+  content: "";
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 60%;
+  background: radial-gradient(ellipse at right, rgba(244, 162, 97, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.name-card .name {
+  font-family: "Newsreader", serif;
+  font-weight: 200;
+  font-size: 72px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.name-card .name em {
+  font-style: italic;
+  font-weight: 300;
+  background: linear-gradient(180deg, var(--amber) 0%, var(--dawn) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.name-card .meta {
+  display: flex;
+  gap: 32px;
+  margin-top: 16px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  color: var(--apex-dim);
+  letter-spacing: 0.04em;
+}
+.name-card .meta span strong { color: var(--apex); font-weight: 500; }
+.name-card .cta {
+  background: var(--amber);
+  color: var(--night);
+  border: none;
+  padding: 20px 36px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+}
+.name-card .cta:hover { background: var(--apex); transform: translateY(-2px); }
+.name-card .price {
+  font-family: "Newsreader", serif;
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--apex);
+  margin-top: 8px;
+}
+.name-card .price small {
+  font-size: 14px;
+  font-family: "JetBrains Mono", monospace;
+  color: var(--apex-mute);
+  margin-left: 8px;
+}
+
+/* Reveal wait section */
+.wait-card {
+  background: linear-gradient(180deg, rgba(61, 27, 110, 0.4) 0%, rgba(196, 69, 54, 0.2) 100%);
+  border: 1px solid rgba(244, 162, 97, 0.2);
+  border-radius: 24px;
+  padding: 64px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.wait-card::before {
+  content: "";
+  position: absolute;
+  bottom: -50%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(244, 162, 97, 0.4) 0%, transparent 60%);
+  animation: dawn-rise 4s ease-in-out infinite alternate;
+}
+.wait-card > * { position: relative; z-index: 1; }
+.wait-card .countdown {
+  font-family: "Newsreader", serif;
+  font-weight: 200;
+  font-size: 120px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  background: linear-gradient(180deg, var(--apex) 0%, var(--amber) 50%, var(--dawn) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-variant-numeric: tabular-nums;
+}
+.wait-card .countdown small {
+  font-size: 24px;
+  color: var(--apex-mute);
+  vertical-align: top;
+  margin-top: 24px;
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 400;
+  display: inline-block;
+}
+.wait-card .wait-headline {
+  font-family: "Newsreader", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 28px;
+  color: var(--apex);
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+.wait-card .wait-sub {
+  font-size: 14px;
+  color: var(--apex-dim);
+  margin-bottom: 40px;
+  letter-spacing: 0.02em;
+}
+.progress-arc {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 239, 213, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.progress-arc-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--indigo), var(--dawn), var(--amber));
+  border-radius: 3px;
+  animation: progress 60s linear forwards;
+  width: 65%;
+}
+
+/* Profile preview */
+.profile {
+  background: rgba(255, 239, 213, 0.03);
+  border: 1px solid var(--hair);
+  border-radius: 24px;
+  padding: 64px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+}
+.profile-name {
+  font-family: "Newsreader", serif;
+  font-weight: 200;
+  font-size: 88px;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+.profile-name em {
+  font-style: italic;
+  font-weight: 300;
+  background: linear-gradient(180deg, var(--amber) 0%, var(--dawn) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.profile-bio {
+  font-style: italic;
+  font-family: "Newsreader", serif;
+  font-size: 20px;
+  color: var(--apex-dim);
+  font-weight: 300;
+  margin-bottom: 32px;
+}
+.records {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.record {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--hair);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+}
+.record .k { color: var(--amber); letter-spacing: 0.08em; text-transform: uppercase; font-size: 11px; align-self: center; }
+.record .v { color: var(--apex); }
+.profile-meta {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--apex-mute);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 24px;
+}
+
+/* Footer */
+footer {
+  padding: 80px 64px 48px;
+  text-align: center;
+  border-top: 1px solid var(--hair);
+  margin-top: 80px;
+}
+footer .tagline {
+  font-family: "Newsreader", serif;
+  font-style: italic;
+  font-weight: 200;
+  font-size: 32px;
+  letter-spacing: -0.01em;
+  margin-bottom: 16px;
+}
+footer .meta {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--apex-mute);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Animations — slow, reverent */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes dawn-rise {
+  from { transform: translateX(-50%) translateY(20px); opacity: 0.7; }
+  to { transform: translateX(-50%) translateY(-20px); opacity: 1; }
+}
+@keyframes progress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+/* Direction marker (only on mockups) */
+.dir-marker {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 999;
+  background: rgba(10, 14, 39, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--hair);
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+.dir-marker a { color: var(--apex-dim); text-decoration: none; margin-left: 12px; }
+.dir-marker a:hover { color: var(--apex); }
+</style>
+</head>
+<body>
+
+<div class="dir-marker">SOLAR GENESIS · 01/03 <a href="index.html">← gallery</a></div>
+
+<nav>
+  <div class="mark">RNS<span>.</span></div>
+  <ul>
+    <li><a href="#">Names</a></li>
+    <li><a href="#">My identity</a></li>
+    <li><a href="#">Docs</a></li>
+  </ul>
+  <button class="connect">Connect wallet</button>
+</nav>
+
+<header class="hero">
+  <div class="kicker">A name service for RiseChain</div>
+  <h1>Claim the first<br><em>light</em> of your<br>on-chain name.</h1>
+  <p>One name. One identity. One sunrise. Every <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;color:var(--amber)">.rise</code> name you mint becomes a permanent record of who you are, anchored on-chain.</p>
+  <div class="search">
+    <input type="text" placeholder="search a name" value="alice" />
+    <span class="suffix">.rise</span>
+    <button>Find</button>
+  </div>
+</header>
+
+<section>
+  <div class="section-label">— Available</div>
+  <h2 class="section-h2">A name is the first<br><em>thing</em> you give yourself.</h2>
+  <div class="name-card">
+    <div>
+      <div class="name">alice<em>.rise</em></div>
+      <div class="meta">
+        <span><strong>Available</strong></span>
+        <span>4 character premium</span>
+      </div>
+      <div class="price">0.005 ETH<small>/ year</small></div>
+    </div>
+    <button class="cta">Commit to claim →</button>
+  </div>
+</section>
+
+<section>
+  <div class="section-label">— Reveal at sunrise</div>
+  <h2 class="section-h2">Held in <em>trust</em> for sixty seconds.<br>Then yours, forever.</h2>
+  <div class="wait-card">
+    <div class="countdown">38<small>s</small></div>
+    <div class="wait-headline">Your reveal window opens at sunrise.</div>
+    <div class="wait-sub">Block 12,345,678 · Committed by 0xFe8E…6Ad1 · Your commit is sealed; no other address can register this name during the wait.</div>
+    <div class="progress-arc"><div class="progress-arc-fill"></div></div>
+  </div>
+</section>
+
+<section>
+  <div class="section-label">— Identity</div>
+  <h2 class="section-h2">What a <em>.rise</em><br>name becomes.</h2>
+  <div class="profile">
+    <div>
+      <div class="profile-name">alice<em>.rise</em></div>
+      <div class="profile-bio">"Independent researcher, building the agentic web one quiet morning at a time."</div>
+      <div class="profile-meta">Inscribed at block 12,345,678 · expires 2027-05-27</div>
+    </div>
+    <div class="records">
+      <div class="record"><span class="k">Address</span><span class="v">0xFe8E…6Ad1</span></div>
+      <div class="record"><span class="k">Avatar</span><span class="v">ipfs://Qm…aB7</span></div>
+      <div class="record"><span class="k">Twitter</span><span class="v">@alice</span></div>
+      <div class="record"><span class="k">Website</span><span class="v">alice.xyz</span></div>
+      <div class="record"><span class="k">Primary name</span><span class="v">✓ verified</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="tagline">Every name a sunrise.</div>
+  <div class="meta">RiseChain Name Service · v1.0 · 2026</div>
+</footer>
+
+</body>
+</html>
