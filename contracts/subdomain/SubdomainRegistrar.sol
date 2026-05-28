@@ -55,6 +55,11 @@ contract SubdomainRegistrar is ISubdomainRegistrar, Ownable, ReentrancyGuard {
     RNS public immutable rns;
     RiseRegistrar public immutable registrar;
     address public immutable defaultResolver;
+    /// @notice The `.rise` TLD node (`namehash('rise')`), read once from the
+    ///         registrar at construction. SINGLE SOURCE OF TRUTH for the
+    ///         forward-namehash check that binds a `parentLabelHash` to its
+    ///         `parentNode` (CR-01) — no hardcoded namehash, no extra ctor arg.
+    bytes32 public immutable riseNode;
     uint256 public constant  FEE_CAP_BPS = 1000;   // D-08 hard cap 10% (immutable cap, D-07)
 
     address public feeRecipient;   // owner-settable (D-07)
@@ -83,6 +88,10 @@ contract SubdomainRegistrar is ISubdomainRegistrar, Ownable, ReentrancyGuard {
         rns = _rns;
         registrar = _registrar;
         defaultResolver = _defaultResolver;
+        // CR-01: source the `.rise` node from the registrar's own `baseNode`
+        // (== namehash('rise')) so the forward-namehash binding shares the SAME
+        // node the registrar derives subnode ownership from. No hardcoded hash.
+        riseNode = _registrar.baseNode();
         feeRecipient = _feeRecipient;
         feeBps = _feeBps;
     }
@@ -100,6 +109,11 @@ contract SubdomainRegistrar is ISubdomainRegistrar, Ownable, ReentrancyGuard {
     function configure(bytes32 parentNode, bytes32 parentLabelHash, address payout, uint256 price, bool enabled, address gateToken, uint256 minGateBalance) external {
         if (_controllerOf(parentNode) != msg.sender) revert NotParentOwner();
         if (!rns.isApprovedForAll(msg.sender, address(this))) revert NotApproved();
+        // CR-01: bind the caller-supplied 2LD labelhash to `parentNode` via the
+        // forward namehash (inversion is impossible, but recomputation is not).
+        // This restores the SUB-05 expiry tuple to the REAL parent name — every
+        // `nameExpires(uint256(parentLabelHash))` read is now provably on-node.
+        if (keccak256(abi.encodePacked(riseNode, parentLabelHash)) != parentNode) revert ParentLabelMismatch();
         if (price > type(uint96).max || minGateBalance > type(uint96).max) revert ValueTooLarge();
         // gate-config sanity: both-or-neither
         if ((gateToken == address(0)) != (minGateBalance == 0)) revert InvalidGateConfig();
@@ -130,67 +144,80 @@ contract SubdomainRegistrar is ISubdomainRegistrar, Ownable, ReentrancyGuard {
     /* ------------------------------------------------------------------ */
 
     /// @inheritdoc ISubdomainRegistrar
-    /// @dev Strict checks-effects-interactions: all state writes + the registry
-    ///      `setSubnodeRecord` happen BEFORE the three independent push transfers
-    ///      (fee -> parent -> refund), and the whole sale is `nonReentrant`.
+    /// @dev Strict checks-effects-interactions, evaluated against the real
+    ///      caller via the shared internal `_register` (no external self-call).
+    ///      The `nonReentrant` guard lives on this public payable entry point.
     function register(bytes32 parentNode, string calldata label, address to) external payable nonReentrant returns (bytes32 subnode) {
+        return _register(parentNode, label, to, msg.sender);
+    }
+
+    /// @inheritdoc ISubdomainRegistrar
+    /// @dev Convenience overload minting to the caller. WR-01: routes through the
+    ///      SAME internal `_register` with `payer = to = msg.sender` — NO external
+    ///      `this.register{value:...}` self-call (which would rebind `msg.sender`
+    ///      to the registrar, mis-gating the buyer and refunding the contract).
+    ///      The `nonReentrant` guard lives on this public payable entry point.
+    function register(bytes32 parentNode, string calldata label)
+        external
+        payable
+        nonReentrant
+        returns (bytes32 subnode)
+    {
+        return _register(parentNode, label, msg.sender, msg.sender);
+    }
+
+    /// @dev Shared sale body for both public `register` overloads. The gate is
+    ///      checked against `payer` and the refund is pushed to `payer`, so the
+    ///      principal is always the real caller (WR-01). NOT `nonReentrant` itself
+    ///      (its two public callers carry the single OZ guard); strict CEI — all
+    ///      state writes + the registry `setSubnodeRecord` happen BEFORE the three
+    ///      independent push transfers (fee -> parent -> refund).
+    function _register(bytes32 parentNode, string calldata label, address to, address payer) internal returns (bytes32 subnode) {
         Config memory c = config[parentNode];
         if (!c.enabled) revert NotEnabled();
         if (bytes(label).length == 0) revert EmptyLabel();            // single-level/non-empty (looser than 2LD)
         bytes32 labelHash = keccak256(bytes(label));
         if (!isSubnodeAvailable(parentNode, labelHash)) revert NotAvailable();   // SUB-06 guard
+        subnode = keccak256(abi.encodePacked(parentNode, labelHash));
 
-        // ---- CHECKS (snapshots gathered in a tight scope to limit stack depth) ----
-        address parentOwner = rns.owner(parentNode);
-        uint256 curExpiry = registrar.nameExpires(uint256(c.parentLabelHash));
+        // ---- CHECKS + EFFECTS (snapshots scoped so they die before settle, to
+        //      keep the live-variable count under the paris stack limit) ----
         {
+            address parentOwner = rns.owner(parentNode);
+            uint256 curExpiry = registrar.nameExpires(uint256(c.parentLabelHash));
             if (parentOwner != c.controller) revert StaleController();    // D-03 StaleController
             if (curExpiry < c.configEpoch) revert StaleController();      // baseline floor
 
             if (c.gateToken != address(0)) {                              // D-09/D-10 gate against the payer
-                if (_balanceOf(c.gateToken, msg.sender) < uint256(c.minGateBalance)) revert GateFailed();
+                if (_balanceOf(c.gateToken, payer) < uint256(c.minGateBalance)) revert GateFailed();
             }
             if (msg.value < uint256(c.price)) revert InsufficientFee();   // D-04 native; D-05 price may be 0
+
+            // ---- EFFECTS (all state writes BEFORE any external value transfer) ----
+            subRecords[parentNode][labelHash] = SubRecord({
+                buyer: to,
+                parentOwnerSnapshot: parentOwner,
+                parentExpirySnapshot: curExpiry
+            });
         }
 
         uint256 fee = c.price == 0 ? 0 : (uint256(c.price) * feeBps) / 10_000;   // feeBps <= FEE_CAP_BPS
-
-        // ---- EFFECTS (all state writes BEFORE any external value transfer) ----
-        subnode = keccak256(abi.encodePacked(parentNode, labelHash));
-        subRecords[parentNode][labelHash] = SubRecord({
-            buyer: to,
-            parentOwnerSnapshot: parentOwner,
-            parentExpirySnapshot: curExpiry
-        });
         rns.setSubnodeRecord(parentNode, labelHash, to, defaultResolver, 0);   // operator-approval path (D-11/A3)
-        emit SubdomainRegistered(parentNode, subnode, msg.sender, to, uint256(c.price), fee, label);
+        emit SubdomainRegistered(parentNode, subnode, payer, to, uint256(c.price), fee, label);
 
-        // ---- INTERACTIONS (independent; fee -> parent -> refund) ----
-        _settle(c.payout, fee, uint256(c.price));
+        // ---- INTERACTIONS (independent; fee -> parent -> refund-to-payer) ----
+        _settle(c.payout, fee, uint256(c.price), payer);
     }
 
-    /// @dev INTERACTIONS step of a sale, split out to keep `register`'s
+    /// @dev INTERACTIONS step of a sale, split out to keep `_register`'s
     ///      live-variable count under the stack limit. Pushes the three
-    ///      independent transfers in fixed order (fee -> parent -> refund); the
-    ///      caller (`register`) is `nonReentrant` and has already written all
-    ///      state, so this is reached strictly after EFFECTS.
-    function _settle(address payout, uint256 fee, uint256 price) private {
+    ///      independent transfers in fixed order (fee -> parent -> refund-to-payer);
+    ///      the public caller is `nonReentrant` and has already written all state,
+    ///      so this is reached strictly after EFFECTS.
+    function _settle(address payout, uint256 fee, uint256 price, address payer) private {
         if (fee != 0)               safeTransferETH(feeRecipient, fee);
         if (price - fee != 0)       safeTransferETH(payout, price - fee);
-        if (msg.value - price != 0) safeTransferETH(msg.sender, msg.value - price);
-    }
-
-    /// @inheritdoc ISubdomainRegistrar
-    /// @dev Convenience overload minting to `msg.sender`. It is NOT itself
-    ///      `nonReentrant`; it delegates to the guarded 3-arg `register` (OZ
-    ///      single-guard limitation — a `nonReentrant` function cannot call
-    ///      another `nonReentrant` function).
-    function register(bytes32 parentNode, string calldata label)
-        external
-        payable
-        returns (bytes32 subnode)
-    {
-        return this.register{value: msg.value}(parentNode, label, msg.sender);
+        if (msg.value - price != 0) safeTransferETH(payer, msg.value - price);
     }
 
     /// @inheritdoc ISubdomainRegistrar
@@ -202,6 +229,11 @@ contract SubdomainRegistrar is ISubdomainRegistrar, Ownable, ReentrancyGuard {
         address newOwner
     ) external {
         if (_controllerOf(parentNode) != msg.sender) revert NotParentOwner();
+        // WR-02: only revoke subnodes that this marketplace actually sold. Without
+        // this guard `revokeSubdomain` doubles as a general-purpose subnode writer
+        // (the parent has granted operator approval) and can emit a misleading
+        // `SubdomainRevoked` for a subnode that was never registered here.
+        if (subRecords[parentNode][labelHash].buyer == address(0)) revert NotSold();
         delete subRecords[parentNode][labelHash];                    // clears so isSubnodeAvailable == true (re-sellable)
         rns.setSubnodeOwner(parentNode, labelHash, newOwner);        // hand back to parent owner or address(0)
         emit SubdomainRevoked(parentNode, labelHash, newOwner);

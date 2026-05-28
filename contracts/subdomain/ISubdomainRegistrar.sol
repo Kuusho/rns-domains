@@ -79,6 +79,11 @@ interface ISubdomainRegistrar {
 
     /// @notice The caller is not the current owner of the parent node.
     error NotParentOwner();
+    /// @notice The supplied `parentLabelHash` does not hash, with the `.rise`
+    ///         node, to the supplied `parentNode` (forward-namehash mismatch).
+    error ParentLabelMismatch();
+    /// @notice The target subnode has no prior marketplace sale record to revoke.
+    error NotSold();
     /// @notice The parent owner has not granted the registrar operator approval.
     error NotApproved();
     /// @notice The parent's listing is disabled.

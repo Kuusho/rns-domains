@@ -173,6 +173,41 @@ describe('SubdomainRegistrar', () => {
         ),
       ).toBeRevertedWithCustomError('InvalidGateConfig')
     })
+
+    it('reverts ParentLabelMismatch when parentLabelHash does not hash to parentNode (CR-01)', async () => {
+      const { rns, subdomainRegistrar } = await loadFixture()
+      await rns.write.setApprovalForAll([subdomainRegistrar.address, true], {
+        account: parentOwner,
+      })
+      // A far-future name's labelhash supplied against alice.rise's node: the
+      // forward namehash keccak256(riseNode, mismatchedLabel) != parentNode, so
+      // the bind check (CR-01) fires BEFORE any nameExpires read can be decoupled.
+      const mismatchedLabelHash = labelhash('mallory') as Hex
+
+      await expect(
+        subdomainRegistrar.write.configure(
+          [parentNode, mismatchedLabelHash, payout.address, PRICE, true, zeroAddress, 0n],
+          { account: parentOwner },
+        ),
+      ).toBeRevertedWithCustomError('ParentLabelMismatch')
+    })
+
+    it('accepts a correctly-formed (parentNode, parentLabelHash) pair (CR-01 happy path)', async () => {
+      const { rns, subdomainRegistrar } = await loadFixture()
+
+      // The matching pair derived from 'alice' must still configure cleanly.
+      await configureSubdomain(subdomainRegistrar, rns, {
+        parentNode,
+        parentLabelHash,
+        payout: payout.address,
+        price: PRICE,
+        parentOwner,
+      })
+
+      const cfg = await subdomainRegistrar.read.config([parentNode])
+      expect(cfg[1]).toBe(parentLabelHash) // stored, validated labelhash
+      expect(cfg[4]).toBe(true) // enabled
+    })
   })
 
   describe('register', () => {
@@ -234,6 +269,60 @@ describe('SubdomainRegistrar', () => {
           account: buyer,
         }),
       ).toBeRevertedWithCustomError('InsufficientFee')
+    })
+  })
+
+  describe('register2', () => {
+    it('2-arg overload mints to msg.sender, gates against the real caller, and refunds the caller (WR-01)', async () => {
+      const { rns, subdomainRegistrar } = await loadFixture()
+      // Gate the listing on an ERC-721 the HOLDER owns (the registrar holds none),
+      // so a working gate proves it is checked against the caller, not the contract.
+      const mock721 = await connection.viem.deployContract('MockERC721', [
+        'Gate721',
+        'G721',
+        [holder.address],
+      ])
+      await configureSubdomain(subdomainRegistrar, rns, {
+        parentNode,
+        parentLabelHash,
+        payout: payout.address,
+        price: PRICE,
+        gateToken: mock721.address,
+        minGateBalance: 1n,
+        parentOwner,
+      })
+
+      // A non-holder calling the 2-arg form fails the gate (checked against the
+      // caller, NOT the registrar's own zero balance — proves no self-call rebind).
+      await expect(
+        subdomainRegistrar.write.register([parentNode, 'mine'], {
+          value: PRICE,
+          account: buyer,
+        }),
+      ).toBeRevertedWithCustomError('GateFailed')
+
+      // The gate-token holder buys via the 2-arg overload with excess value.
+      const overpay = 10n ** 15n // 0.001 RISE excess
+      const holderBefore = await publicClient.getBalance({ address: holder.address })
+      const hash = await subdomainRegistrar.write.register([parentNode, 'mine'], {
+        value: PRICE + overpay,
+        account: holder,
+      })
+      const receipt = await publicClient.getTransactionReceipt({ hash })
+      const gas = receipt.gasUsed * receipt.effectiveGasPrice
+      const holderAfter = await publicClient.getBalance({ address: holder.address })
+
+      // Minted to the caller (msg.sender), NOT the registrar.
+      await expect(
+        rns.read.owner([subNode('mine')]),
+      ).resolves.toEqualAddress(holder.address)
+      // Caller spent exactly PRICE + gas — the overpay was refunded to the CALLER
+      // (not pushed back into the contract via a rebound msg.sender).
+      expect(holderBefore - holderAfter).toBe(PRICE + gas)
+      // SUB-03: the contract pools nothing after a 2-arg sale.
+      await expect(
+        publicClient.getBalance({ address: subdomainRegistrar.address }),
+      ).resolves.toBe(0n)
     })
   })
 
@@ -497,6 +586,26 @@ describe('SubdomainRegistrar', () => {
           account: stranger,
         }),
       ).toBeRevertedWithCustomError('NotAvailable')
+    })
+
+    it('reverts NotSold when the parent owner revokes a never-sold label (WR-02)', async () => {
+      const { rns, subdomainRegistrar } = await loadFixture()
+      await configureSubdomain(subdomainRegistrar, rns, {
+        parentNode,
+        parentLabelHash,
+        payout: payout.address,
+        price: PRICE,
+        parentOwner,
+      })
+
+      // No sale has occurred under 'ghost' — revoke must NOT double as a general
+      // subnode writer / emit a misleading SubdomainRevoked.
+      await expect(
+        subdomainRegistrar.write.revokeSubdomain(
+          [parentNode, labelhash('ghost'), parentOwner.address],
+          { account: parentOwner },
+        ),
+      ).toBeRevertedWithCustomError('NotSold')
     })
 
     it('reverts NotParentOwner when a stranger revokes', async () => {
