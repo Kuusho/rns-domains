@@ -4,7 +4,9 @@ pragma solidity ^0.8.26;
 import {RNS} from "../registry/RNS.sol";
 import {IRiseRegistrar} from "./IRiseRegistrar.sol";
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {ERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import {IERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -35,11 +37,18 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 ///      Inheritance order matches the reference (`ERC721, IRiseRegistrar,
 ///      Ownable`) — `Ownable` last so the c3-linearized `_msgSender()` resolves
 ///      to OZ's, and so the `supportsInterface` override path lines up.
-contract RiseRegistrar is ERC721, IRiseRegistrar, Ownable {
+contract RiseRegistrar is ERC721Enumerable, IRiseRegistrar, Ownable {
     /// @dev Token id → expiry timestamp. Visibility intentionally default
     ///      (matches reference). The public surface goes through
     ///      `nameExpires(id)` so the field can stay private.
     mapping(uint256 => uint256) expiries;
+
+    /// @notice Lifetime count of successful registrations through _register
+    ///         (covers both register and registerOnly). ENUM-02 / D-03.
+    uint256 public registrations;
+
+    /// @notice Lifetime count of successful renewals. ENUM-02 / D-03.
+    uint256 public renewals;
 
     /// @notice The RNS registry this registrar talks into. Named `rns` not
     ///         `ens` per Phase 2 D-11 — the ported tests read `.read.rns()`.
@@ -202,6 +211,18 @@ contract RiseRegistrar is ERC721, IRiseRegistrar, Ownable {
         return expiries[id] + GRACE_PERIOD < block.timestamp;
     }
 
+    /// @notice Returns every token id owned by `owner` (raw ERC-721 ownership —
+    ///         an expired-but-not-burned name still appears under its last owner
+    ///         until re-registered, per D-02). Thin loop over the inherited
+    ///         ERC721Enumerable index. ENUM-01.
+    /// @param owner The address to enumerate.
+    /// @return ids The list of token ids `owner` holds.
+    function tokensOfOwner(address owner) external view returns (uint256[] memory ids) {
+        uint256 n = balanceOf(owner);
+        ids = new uint256[](n);
+        for (uint256 i; i < n; ++i) ids[i] = tokenOfOwnerByIndex(owner, i);
+    }
+
     /// @notice Registers a name and mints the ERC-721 token, writing the
     ///         registry's record of the subnode as well.
     /// @param id The labelhash of the label to register.
@@ -268,6 +289,7 @@ contract RiseRegistrar is ERC721, IRiseRegistrar, Ownable {
         }
 
         emit NameRegistered(id, owner, block.timestamp + duration);
+        registrations++;
         return block.timestamp + duration;
     }
 
@@ -290,6 +312,7 @@ contract RiseRegistrar is ERC721, IRiseRegistrar, Ownable {
 
         expiries[id] += duration;
         emit NameRenewed(id, expiries[id]);
+        renewals++;
         return expiries[id];
     }
 
@@ -317,10 +340,11 @@ contract RiseRegistrar is ERC721, IRiseRegistrar, Ownable {
     /// @return True if the interface is supported.
     function supportsInterface(
         bytes4 interfaceID
-    ) public view override(ERC721, IERC165) returns (bool) {
+    ) public view override(ERC721Enumerable, IERC165) returns (bool) {
         return
             interfaceID == INTERFACE_META_ID ||
             interfaceID == ERC721_ID ||
-            interfaceID == RECLAIM_ID;
+            interfaceID == RECLAIM_ID ||
+            interfaceID == type(IERC721Enumerable).interfaceId;
     }
 }
