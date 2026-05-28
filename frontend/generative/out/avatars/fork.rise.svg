@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="fork.rise avatar">
+<defs>
+    <linearGradient id="bg-forkrise" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="hsl(55 61% 58%)"/>
+      <stop offset="58%" stop-color="hsl(55 61% 58%)"/>
+      <stop offset="64%" stop-color="hsl(156 61% 44%)"/>
+      <stop offset="100%" stop-color="hsl(156 61% 44%)"/>
+    </linearGradient>
+    <clipPath id="clip-forkrise"><rect width="256" height="256" rx="56.32"/></clipPath>
+  </defs>
+  <g clip-path="url(#clip-forkrise)">
+    <rect width="256" height="256" fill="url(#bg-forkrise)"/>
+    <g transform="rotate(219 128 117.76)"><circle cx="128" cy="117.76" r="33.3" fill="#FFEFD5" opacity="0.92"/>
+        <line x1="158.72" y1="66.56" x2="112.64" y2="174.08"
+              stroke="#FFEFD5" stroke-width="4.608" stroke-linecap="round" opacity="0.88"/></g>
+    <line x1="0" y1="158.72" x2="256" y2="158.72" stroke="#FFEFD5" stroke-width="1" opacity="0.22"/>
+  </g>
+</svg>

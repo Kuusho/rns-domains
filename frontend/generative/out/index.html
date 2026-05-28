@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>RNS — generative output</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,300;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root{--night:#0A0E27;--apex:#FFEFD5;--amber:#F4A261;--dim:rgba(255,239,213,.6);--mute:rgba(255,239,213,.32)}
+  *{box-sizing:border-box;margin:0}body{background:var(--night);color:var(--apex);font-family:'Newsreader',serif;padding:64px}
+  h1{font-weight:300;font-size:48px;letter-spacing:-.02em;margin-bottom:8px}h1 em{font-style:italic;color:var(--amber)}
+  p.sub{color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.04em;margin-bottom:56px}
+  h2{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--amber);margin:48px 0 24px}
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:24px}
+  figure.a img{border-radius:16px;display:block;width:100%;height:auto}
+  figure.a figcaption{margin-top:12px;display:flex;flex-direction:column;gap:2px}
+  .nm{font-style:italic;font-size:18px}.ds{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--mute);letter-spacing:.02em}
+  .og{display:flex;flex-direction:column;gap:40px;max-width:1000px}
+  figure.o img{width:100%;height:auto;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+  figure.o figcaption{margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim);letter-spacing:.08em}
+  .st{color:var(--amber)}
+</style></head><body>
+  <h1>Every name has a <em>face</em> before it has a photo.</h1>
+  <p class="sub">deterministic from keccak256(namehash(name)) · 12 avatars · 3 OG states · rendered 2026-05-28</p>
+  <h2>Avatars (D-07)</h2>
+  <div class="grid">
+  <figure class="a">
+    <img src="avatars/alice.rise.svg" width="160" height="160" alt="alice.rise"/>
+    <figcaption><span class="nm">alice.rise</span><span class="ds">split · arc · h354/85 · 71% · rot 128°</span></figcaption>
+  </figure>
+  <figure class="a">
+    <img src="avatars/max.rise.svg" width="160" height="160" alt="max.rise"/>
+    <figcaption><span class="nm">max.rise</span><span class="ds">banded · diamond · h13/108 · 61% · rot 10°</span></figcaption>
+  </figure>
+  <figure class="a">
+    <img src="avatars/satoshi.rise.svg" width="160" height="160" alt="satoshi.rise"/>
+    <figcaption><span class="nm">satoshi.rise</span><span class="ds">banded · chain · h155/204 · 67% · rot 193°</span></figcaption>
+  </figure>
+  <figure class="a">
+    <img src="avatars/dao.rise.svg" width="160" height="160" alt="dao.rise"/>
+    <figcaption><span class="nm">dao.rise</span><span class="ds">radial · orbit · h116/151 · 78% · rot 281°</span></figcaption>
+  </figure>
+  <figure class="a">
+    <img src="avatars/agent.rise.svg" width="160" height="160" alt="agent.rise"/>
+    <figcaption><span class="nm">agent.rise</span><span class="ds">split · chain · h48/113 · 68% · rot 162°</span></figcaption>
+  </figure>
+  <figure class="a">
+    <img src="avatars/davit.rise.svg" width="160" height="160" alt="davit.rise"/>
+    <figcaption><span class="nm">davit.rise</span><span class="ds">split · sun · h323/12 · 63% · rot 10°</span></figcaption>
+  </figure>
+  <figure class="a">
+    <img src="avatars/rise.rise.svg" width="160" height="160" alt="rise.rise"/>
+    <figcaption><span class="nm">rise.rise</span><span class="ds">radial · chain · h145/245 · 69% · rot 176°</span></figcaption>
+  </figure>
+  <figure class="a">
+    <img src="avatars/rns.rise.svg" width="160" height="160" alt="rns.rise"/>
+    <figcaption><span class="nm">rns.rise</span><span class="ds">split · aperture · h282/343 · 70% · rot 191°</span></figcaption>
+  </figure>
+  <figure class="a">
+    <img src="avatars/fork.rise.svg" width="160" height="160" alt="fork.rise"/>
+    <figcaption><span class="nm">fork.rise</span><span class="ds">banded · sun · h55/156 · 61% · rot 219°</span></figcaption>
+  </figure>
+  <figure class="a">
+    <img src="avatars/block.rise.svg" width="160" height="160" alt="block.rise"/>
+    <figcaption><span class="nm">block.rise</span><span class="ds">radial · diamond · h89/183 · 63% · rot 85°</span></figcaption>
+  </figure>
+  <figure class="a">
+    <img src="avatars/commit.rise.svg" width="160" height="160" alt="commit.rise"/>
+    <figcaption><span class="nm">commit.rise</span><span class="ds">split · aperture · h55/167 · 75% · rot 181°</span></figcaption>
+  </figure>
+  <figure class="a">
+    <img src="avatars/reveal.rise.svg" width="160" height="160" alt="reveal.rise"/>
+    <figcaption><span class="nm">reveal.rise</span><span class="ds">split · diamond · h353/108 · 72% · rot 54°</span></figcaption>
+  </figure></div>
+  <h2>Link previews (D-19) · 1200×630</h2>
+  <div class="og">
+  <figure class="o">
+    <img src="og/alice.rise-profile.svg" alt="alice.rise profile"/>
+    <figcaption>alice.rise · <span class="st">PROFILE</span></figcaption>
+  </figure>
+  <figure class="o">
+    <img src="og/max.rise-available.svg" alt="max.rise available"/>
+    <figcaption>max.rise · <span class="st">AVAILABLE</span></figcaption>
+  </figure>
+  <figure class="o">
+    <img src="og/satoshi.rise-reserved.svg" alt="satoshi.rise reserved"/>
+    <figcaption>satoshi.rise · <span class="st">RESERVED</span></figcaption>
+  </figure>
+  <figure class="o">
+    <img src="og/agent.rise-profile.svg" alt="agent.rise profile"/>
+    <figcaption>agent.rise · <span class="st">PROFILE</span></figcaption>
+  </figure>
+  <figure class="o">
+    <img src="og/rise.rise-reserved.svg" alt="rise.rise reserved"/>
+    <figcaption>rise.rise · <span class="st">RESERVED</span></figcaption>
+  </figure></div>
+</body></html>

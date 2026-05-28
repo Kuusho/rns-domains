@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="satoshi.rise avatar">
+<defs>
+    <linearGradient id="bg-satoshirise" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="hsl(155 67% 58%)"/>
+      <stop offset="58%" stop-color="hsl(155 67% 58%)"/>
+      <stop offset="64%" stop-color="hsl(204 67% 44%)"/>
+      <stop offset="100%" stop-color="hsl(204 67% 44%)"/>
+    </linearGradient>
+    <clipPath id="clip-satoshirise"><rect width="256" height="256" rx="56.32"/></clipPath>
+  </defs>
+  <g clip-path="url(#clip-satoshirise)">
+    <rect width="256" height="256" fill="url(#bg-satoshirise)"/>
+    <g transform="rotate(193 128 117.76)"><circle cx="87.03999999999999" cy="117.76" r="21.8" fill="#FFEFD5" opacity="0.92"/>
+        <circle cx="128" cy="117.76" r="15.4" fill="#FFEFD5" opacity="0.92"/>
+        <circle cx="163.84" cy="117.76" r="10.2" fill="#FFEFD5" opacity="0.92"/></g>
+    <line x1="0" y1="158.72" x2="256" y2="158.72" stroke="#FFEFD5" stroke-width="1" opacity="0.22"/>
+  </g>
+</svg>

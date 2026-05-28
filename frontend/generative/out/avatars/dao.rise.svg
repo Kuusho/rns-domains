@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="dao.rise avatar">
+<defs>
+    <radialGradient id="bg-daorise" cx="42%" cy="40%" r="78%">
+      <stop offset="0%" stop-color="hsl(116 78% 58%)"/>
+      <stop offset="100%" stop-color="hsl(151 78% 44%)"/>
+    </radialGradient>
+    <clipPath id="clip-daorise"><rect width="256" height="256" rx="56.32"/></clipPath>
+  </defs>
+  <g clip-path="url(#clip-daorise)">
+    <rect width="256" height="256" fill="url(#bg-daorise)"/>
+    <g transform="rotate(281 128 117.76)"><ellipse cx="128" cy="117.76" rx="56.3" ry="28.2" fill="none" stroke="#FFEFD5" stroke-width="4.608" opacity="0.85"/>
+        <circle cx="128" cy="117.76" r="17.9" fill="#FFEFD5" opacity="0.92"/></g>
+    <line x1="0" y1="158.72" x2="256" y2="158.72" stroke="#FFEFD5" stroke-width="1" opacity="0.22"/>
+  </g>
+</svg>

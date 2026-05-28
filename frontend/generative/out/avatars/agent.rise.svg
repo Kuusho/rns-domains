@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="agent.rise avatar">
+<defs>
+    <linearGradient id="bg-agentrise" gradientTransform="rotate(45 0.5 0.5)">
+    <stop offset="0%" stop-color="hsl(48 68% 58%)"/>
+    <stop offset="50%" stop-color="hsl(48 68% 58%)"/>
+    <stop offset="50%" stop-color="hsl(113 68% 44%)"/>
+    <stop offset="100%" stop-color="hsl(113 68% 44%)"/>
+  </linearGradient>
+    <clipPath id="clip-agentrise"><rect width="256" height="256" rx="56.32"/></clipPath>
+  </defs>
+  <g clip-path="url(#clip-agentrise)">
+    <rect width="256" height="256" fill="url(#bg-agentrise)"/>
+    <g transform="rotate(162 128 117.76)"><circle cx="87.03999999999999" cy="117.76" r="21.8" fill="#FFEFD5" opacity="0.92"/>
+        <circle cx="128" cy="117.76" r="15.4" fill="#FFEFD5" opacity="0.92"/>
+        <circle cx="163.84" cy="117.76" r="10.2" fill="#FFEFD5" opacity="0.92"/></g>
+    <line x1="0" y1="158.72" x2="256" y2="158.72" stroke="#FFEFD5" stroke-width="1" opacity="0.22"/>
+  </g>
+</svg>
