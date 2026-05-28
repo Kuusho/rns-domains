@@ -1,5 +1,12 @@
 import hre from 'hardhat'
-import { labelhash, namehash, zeroAddress, type Address, type Hex } from 'viem'
+import {
+  decodeErrorResult,
+  labelhash,
+  namehash,
+  zeroAddress,
+  type Address,
+  type Hex,
+} from 'viem'
 import { toLabelId } from '../fixtures/utils.js'
 import { configureSubdomain } from '../fixtures/configureSubdomain.js'
 
@@ -366,6 +373,299 @@ describe('SubdomainRegistrar', () => {
       await expect(
         subdomainRegistrar.write.setFeeBps([100n], { account: stranger }),
       ).toBeRevertedWithString('Ownable: caller is not the owner')
+    })
+  })
+
+  describe('gate', () => {
+    it('lets an ERC-20 holder register and reverts GateFailed for a non-holder (D-09)', async () => {
+      const { rns, subdomainRegistrar } = await loadFixture()
+      // MockERC20 mints to deployer + each passed holder.
+      const mock20 = await connection.viem.deployContract('MockERC20', [
+        'Gate20',
+        'G20',
+        [holder.address],
+      ])
+      await configureSubdomain(subdomainRegistrar, rns, {
+        parentNode,
+        parentLabelHash,
+        payout: payout.address,
+        price: PRICE,
+        gateToken: mock20.address,
+        minGateBalance: 1n,
+        parentOwner,
+      })
+
+      // holder passes the gate
+      await subdomainRegistrar.write.register([parentNode, 'h20', holder.address], {
+        value: PRICE,
+        account: holder,
+      })
+      await expect(
+        rns.read.owner([subNode('h20')]),
+      ).resolves.toEqualAddress(holder.address)
+
+      // a non-holder (buyer) reverts GateFailed
+      await expect(
+        subdomainRegistrar.write.register([parentNode, 'nope', buyer.address], {
+          value: PRICE,
+          account: buyer,
+        }),
+      ).toBeRevertedWithCustomError('GateFailed')
+    })
+
+    it('lets an ERC-721 holder register and reverts GateFailed for a non-holder (D-10)', async () => {
+      const { rns, subdomainRegistrar } = await loadFixture()
+      // MockERC721 mints sequential ids to each passed holder.
+      const mock721 = await connection.viem.deployContract('MockERC721', [
+        'Gate721',
+        'G721',
+        [holder.address],
+      ])
+      await configureSubdomain(subdomainRegistrar, rns, {
+        parentNode,
+        parentLabelHash,
+        payout: payout.address,
+        price: PRICE,
+        gateToken: mock721.address,
+        minGateBalance: 1n,
+        parentOwner,
+      })
+
+      // ERC-721 holder (balance >= 1) passes the SAME balanceOf path as ERC-20
+      await subdomainRegistrar.write.register([parentNode, 'h721', holder.address], {
+        value: PRICE,
+        account: holder,
+      })
+      await expect(
+        rns.read.owner([subNode('h721')]),
+      ).resolves.toEqualAddress(holder.address)
+
+      // non-holder reverts GateFailed
+      await expect(
+        subdomainRegistrar.write.register([parentNode, 'nope', buyer.address], {
+          value: PRICE,
+          account: buyer,
+        }),
+      ).toBeRevertedWithCustomError('GateFailed')
+    })
+
+    it('treats a non-implementing gate token as balance 0 (GateFailed for everyone)', async () => {
+      const { rns, subdomainRegistrar } = await loadFixture()
+      const nonToken = await connection.viem.deployContract('MockNonToken', [])
+      await configureSubdomain(subdomainRegistrar, rns, {
+        parentNode,
+        parentLabelHash,
+        payout: payout.address,
+        price: PRICE,
+        gateToken: nonToken.address,
+        minGateBalance: 1n,
+        parentOwner,
+      })
+
+      // _balanceOf returns 0 for a token that does not answer the selector →
+      // every buyer fails the gate (RESEARCH Pattern 3 / T-7-08). Even the holder
+      // account fails because the non-token never reports a balance.
+      await expect(
+        subdomainRegistrar.write.register([parentNode, 'sub', holder.address], {
+          value: PRICE,
+          account: holder,
+        }),
+      ).toBeRevertedWithCustomError('GateFailed')
+    })
+  })
+
+  describe('revoke', () => {
+    it('blocks overwriting an active subdomain (NotAvailable, SUB-06)', async () => {
+      const { rns, subdomainRegistrar } = await loadFixture()
+      await configureSubdomain(subdomainRegistrar, rns, {
+        parentNode,
+        parentLabelHash,
+        payout: payout.address,
+        price: PRICE,
+        parentOwner,
+      })
+
+      await subdomainRegistrar.write.register([parentNode, 'sub', buyer.address], {
+        value: PRICE,
+        account: buyer,
+      })
+
+      // a second buyer cannot overwrite the active subnode
+      await expect(
+        subdomainRegistrar.write.register([parentNode, 'sub', stranger.address], {
+          value: PRICE,
+          account: stranger,
+        }),
+      ).toBeRevertedWithCustomError('NotAvailable')
+    })
+
+    it('reverts NotParentOwner when a stranger revokes', async () => {
+      const { rns, subdomainRegistrar } = await loadFixture()
+      await configureSubdomain(subdomainRegistrar, rns, {
+        parentNode,
+        parentLabelHash,
+        payout: payout.address,
+        price: PRICE,
+        parentOwner,
+      })
+      await subdomainRegistrar.write.register([parentNode, 'sub', buyer.address], {
+        value: PRICE,
+        account: buyer,
+      })
+
+      await expect(
+        subdomainRegistrar.write.revokeSubdomain(
+          [parentNode, labelhash('sub'), stranger.address],
+          { account: stranger },
+        ),
+      ).toBeRevertedWithCustomError('NotParentOwner')
+    })
+
+    it('lets the parent owner revoke, making the subnode re-sellable (SUB-06)', async () => {
+      const { rns, subdomainRegistrar } = await loadFixture()
+      await configureSubdomain(subdomainRegistrar, rns, {
+        parentNode,
+        parentLabelHash,
+        payout: payout.address,
+        price: PRICE,
+        parentOwner,
+      })
+      await subdomainRegistrar.write.register([parentNode, 'sub', buyer.address], {
+        value: PRICE,
+        account: buyer,
+      })
+
+      // before revoke: active, not available
+      await expect(
+        subdomainRegistrar.read.isActive([parentNode, labelhash('sub')]),
+      ).resolves.toBe(true)
+      await expect(
+        subdomainRegistrar.read.isSubnodeAvailable([parentNode, labelhash('sub')]),
+      ).resolves.toBe(false)
+
+      // parent owner revokes, handing the subnode back to themselves
+      await subdomainRegistrar.write.revokeSubdomain(
+        [parentNode, labelhash('sub'), parentOwner.address],
+        { account: parentOwner },
+      )
+
+      await expect(
+        rns.read.owner([subNode('sub')]),
+      ).resolves.toEqualAddress(parentOwner.address)
+      await expect(
+        subdomainRegistrar.read.isSubnodeAvailable([parentNode, labelhash('sub')]),
+      ).resolves.toBe(true) // re-sellable
+
+      // a fresh sale of the same label now succeeds
+      await subdomainRegistrar.write.register([parentNode, 'sub', stranger.address], {
+        value: PRICE,
+        account: stranger,
+      })
+      await expect(
+        rns.read.owner([subNode('sub')]),
+      ).resolves.toEqualAddress(stranger.address)
+    })
+  })
+
+  describe('reentr', () => {
+    // Solidity `Error(string)` ABI — used to decode the inner revert reason the
+    // attacker captures, so we can assert the guard string SPECIFICALLY fired.
+    const ERROR_STRING_ABI = [
+      { type: 'error', name: 'Error', inputs: [{ name: 'message', type: 'string' }] },
+    ] as const
+
+    it('a malicious payout re-entering register fails the whole sale (D-06 / T-7-01)', async () => {
+      const { rns, subdomainRegistrar } = await loadFixture()
+      const attacker = await connection.viem.deployContract('ReentrantPayout', [])
+
+      // arm the attacker to re-enter register('evil') for the same subnode on
+      // its first received value; default bubble mode bubbles the inner revert
+      await attacker.write.setTarget([subdomainRegistrar.address, parentNode, 'evil'])
+
+      // list the parent with the attacker as the payout sink (fee default 0, so
+      // the full price is pushed to the payout → hits attacker.receive())
+      await configureSubdomain(subdomainRegistrar, rns, {
+        parentNode,
+        parentLabelHash,
+        payout: attacker.address,
+        price: PRICE,
+        parentOwner,
+      })
+
+      // The parent-share push lands on attacker.receive(), which re-enters the
+      // nonReentrant register. The inner re-entry is rejected by the guard; in
+      // bubble mode the failed push makes safeTransferETH revert the whole sale
+      // (ETHTransferFailed at the outer boundary) — the attack cannot complete.
+      await expect(
+        subdomainRegistrar.write.register([parentNode, 'evil', buyer.address], {
+          value: PRICE,
+          account: buyer,
+        }),
+      ).toBeRevertedWithCustomError('ETHTransferFailed')
+
+      // The subnode was NOT minted — the re-entrant sale fully reverted.
+      await expect(
+        rns.read.owner([subNode('evil')]),
+      ).resolves.toEqualAddress(zeroAddress)
+    })
+
+    it('the captured re-entry reason equals "ReentrancyGuard: reentrant call" (payout)', async () => {
+      const { rns, subdomainRegistrar } = await loadFixture()
+      const attacker = await connection.viem.deployContract('ReentrantPayout', [])
+      await attacker.write.setTarget([subdomainRegistrar.address, parentNode, 'evil'])
+      await attacker.write.setBubble([false]) // capture mode
+
+      await configureSubdomain(subdomainRegistrar, rns, {
+        parentNode,
+        parentLabelHash,
+        payout: attacker.address,
+        price: PRICE,
+        parentOwner,
+      })
+
+      // Outer sale settles (attacker accepts funds after capturing the revert).
+      await subdomainRegistrar.write.register([parentNode, 'evil', buyer.address], {
+        value: PRICE,
+        account: buyer,
+      })
+
+      // The attacker captured the inner revert reason — decode it and assert it
+      // is exactly the OZ v4 ReentrancyGuard string (proves the guard fired).
+      const reason = (await attacker.read.lastRevertReason()) as Hex
+      const decoded = decodeErrorResult({ abi: ERROR_STRING_ABI, data: reason })
+      expect(decoded.errorName).toBe('Error')
+      expect(decoded.args[0]).toBe('ReentrancyGuard: reentrant call')
+    })
+
+    it('the captured re-entry reason equals "ReentrancyGuard: reentrant call" (feeRecipient)', async () => {
+      const { rns, subdomainRegistrar } = await loadFixture()
+      const attacker = await connection.viem.deployContract('ReentrantPayout', [])
+      await attacker.write.setTarget([subdomainRegistrar.address, parentNode, 'evil'])
+      await attacker.write.setBubble([false]) // capture mode
+
+      // route the protocol fee to the attacker (owner-only) with a non-zero fee
+      await subdomainRegistrar.write.setFeeRecipient([attacker.address], {
+        account: deployer,
+      })
+      await subdomainRegistrar.write.setFeeBps([500n], { account: deployer })
+
+      await configureSubdomain(subdomainRegistrar, rns, {
+        parentNode,
+        parentLabelHash,
+        payout: payout.address,
+        price: PRICE,
+        parentOwner,
+      })
+
+      await subdomainRegistrar.write.register([parentNode, 'evil', buyer.address], {
+        value: PRICE,
+        account: buyer,
+      })
+
+      const reason = (await attacker.read.lastRevertReason()) as Hex
+      const decoded = decodeErrorResult({ abi: ERROR_STRING_ABI, data: reason })
+      expect(decoded.errorName).toBe('Error')
+      expect(decoded.args[0]).toBe('ReentrancyGuard: reentrant call')
     })
   })
 })
