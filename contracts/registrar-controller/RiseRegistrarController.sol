@@ -46,6 +46,11 @@ contract RiseRegistrarController is Ownable, IRiseRegistrarController, ERC165 {
     /// @notice The minimum duration for a registration.
     uint256 public constant MIN_REGISTRATION_DURATION = 28 days;
 
+    /// @notice The maximum registration/renewal duration (MYR-01 / D-06): 10
+    ///         years. Hard cap on the multi-year path; the 28-day floor
+    ///         (MIN_REGISTRATION_DURATION) is unchanged.
+    uint256 public constant MAX_REGISTRATION_DURATION = 10 * 365 days;
+
     /// @notice The node (i.e. namehash) for the `.rise` TLD.
     /// @dev Pre-computed `namehash('rise')`. Solidity 0.8.x cannot compute
     ///      keccak256 at compile time, so the constant is baked in as a hex
@@ -101,6 +106,13 @@ contract RiseRegistrarController is Ownable, IRiseRegistrarController, ERC165 {
     ///         the one-shot `endLaunch()` toggle (D-05). NEW vs reference.
     bool public launchActive;
 
+    /// @notice Cumulative native RISE paid through this controller for
+    ///         registrations + renewals (protocol revenue). ENUM-02 / D-04 —
+    ///         counts the PRICED amount (base+premium / base), NOT msg.value
+    ///         (which includes the refunded excess — Pitfall 2). Subdomain
+    ///         marketplace flows are NOT folded in (D-04).
+    uint256 public cumulativeVolume;
+
     /// @notice Thrown when a commitment is not found.
     error CommitmentNotFound(bytes32 commitment);
 
@@ -123,6 +135,9 @@ contract RiseRegistrarController is Ownable, IRiseRegistrarController, ERC165 {
 
     /// @notice Thrown when the duration supplied for a registration is too short.
     error DurationTooShort(uint256 duration);
+
+    /// @notice Thrown when the duration exceeds the 10-year cap. MYR-01 / D-06.
+    error DurationTooLong(uint256 duration);
 
     /// @notice Thrown when data is supplied for a registration without a resolver.
     error ResolverRequiredWhenDataSupplied();
@@ -253,6 +268,12 @@ contract RiseRegistrarController is Ownable, IRiseRegistrarController, ERC165 {
 
         if (registration.duration < MIN_REGISTRATION_DURATION)
             revert DurationTooShort(registration.duration);
+
+        // MYR-01 / D-06 — hard 10-year upper bound. Enforced here so BOTH the
+        // makeCommitment pre-check and register (which re-derives the same
+        // commitment) cover the register path; renew adds its own check.
+        if (registration.duration > MAX_REGISTRATION_DURATION)
+            revert DurationTooLong(registration.duration);
 
         return keccak256(abi.encode(registration));
     }
@@ -385,6 +406,12 @@ contract RiseRegistrarController is Ownable, IRiseRegistrarController, ERC165 {
             registration.referrer
         );
 
+        // ENUM-02 / D-04 — accrue the PRICED amount (base+premium), NOT
+        // msg.value (Pitfall 2). Pure storage write placed in the EFFECTS
+        // region, BEFORE the refund-last external call (CEI preserved; no new
+        // reentrancy surface introduced).
+        cumulativeVolume += totalPrice;
+
         // Pitfall 2 — refund of excess payment is the LAST statement after
         // all state mutations and sub-calls (reentrancy posture preserved
         // from reference).
@@ -400,6 +427,11 @@ contract RiseRegistrarController is Ownable, IRiseRegistrarController, ERC165 {
     ) external payable override {
         bytes32 labelhash = keccak256(bytes(label));
 
+        // MYR-01 / D-06 — hard 10-year upper bound. renew does NOT go through
+        // makeCommitment, so the cap is enforced here independently. NO lower
+        // bound is added — renew has no MIN floor today and that is preserved.
+        if (duration > MAX_REGISTRATION_DURATION) revert DurationTooLong(duration);
+
         IPriceOracle.Price memory price = _rentPrice(
             label,
             labelhash,
@@ -410,6 +442,11 @@ contract RiseRegistrarController is Ownable, IRiseRegistrarController, ERC165 {
         uint256 expires = base.renew(uint256(labelhash), duration);
 
         emit NameRenewed(label, labelhash, price.base, expires, referrer);
+
+        // ENUM-02 / D-04 — accrue the PRICED amount (price.base), NOT msg.value
+        // (Pitfall 2). Storage write BEFORE the refund-last external call
+        // (CEI preserved; mirrors register()).
+        cumulativeVolume += price.base;
 
         // Pitfall 2 — refund last (mirrors register()).
         if (msg.value > price.base)

@@ -7,7 +7,9 @@ import { keccak256, toBytes } from 'viem'
 // Constructor args (7-arg shape — RESEARCH Focus 1 keeps all 7; thinning breaks
 // REG-04 because rns.setRecord is required for the resolver-multicall path):
 //   1. RiseRegistrar         — the ERC-721 the controller mints names through
-//   2. IPriceOracle          — RisePriceOracle (Phase 5)
+//   2. IPriceOracle          — RiseDurationPriceOracle (Phase 8 — repointed from
+//                              RisePriceOracle per RF-1; prices is immutable, so
+//                              switching the discount oracle forces a redeploy)
 //   3. minCommitmentAge      — 60 (seconds; D-01)
 //   4. maxCommitmentAge      — 86400 (24h; D-01)
 //   5. IReverseRegistrar     — ReverseRegistrar (06-01)
@@ -67,8 +69,12 @@ export default deployScript(
     const registrar = get<(typeof artifacts.RiseRegistrar)['abi']>(
       'RiseRegistrar',
     )
-    const priceOracle = get<(typeof artifacts.RisePriceOracle)['abi']>(
-      'RisePriceOracle',
+    // RF-1 (Phase 8 / Plan 08-03) — the controller's `prices` arg now points at
+    // the RiseDurationPriceOracle (tiered multi-year discount). prices is
+    // `immutable` with no setter, so repointing it forces this controller
+    // redeploy (id bumped to v1.1.0 below).
+    const priceOracle = get<(typeof artifacts.RiseDurationPriceOracle)['abi']>(
+      'RiseDurationPriceOracle',
     )
     const reverseRegistrar = get<
       (typeof artifacts.ReverseRegistrar)['abi']
@@ -122,7 +128,10 @@ export default deployScript(
     }
   },
   {
-    id: 'RiseRegistrarController v1.0.0',
+    // id bumped to v1.1.0 — Phase 8: cumulativeVolume counter + 1-10yr cap +
+    // prices repointed at RiseDurationPriceOracle (RF-1: prices is immutable,
+    // redeploy forced).
+    id: 'RiseRegistrarController v1.1.0',
     tags: [
       'category:registrar-controller',
       'RiseRegistrarController',
@@ -131,7 +140,9 @@ export default deployScript(
     dependencies: [
       'RiseRegistrar:contract',
       'RegistrarSecurityController:contract',
-      'RisePriceOracle:contract',
+      // Controller now consumes the duration oracle (the discount source) —
+      // RisePriceOracle is no longer a controller dependency.
+      'RiseDurationPriceOracle:contract',
       'ReverseRegistrar:contract',
       'DefaultReverseRegistrar:contract',
       'RNSRegistry',

@@ -82,7 +82,17 @@ export default deployScript(
     })
   },
   {
-    id: 'RiseRegistrarController:setup v1.0.0',
+    // id bumped to v1.1.0 — Phase 8 (Plan 08-03): the controller was redeployed
+    // (RF-1 forced redeploy, contract id v1.0.0 -> v1.1.0). rocketh keys
+    // "setup already done" off this script's own id, so against a PERSISTED
+    // deployments store the v1.0.0 setup record would skip re-running and leave
+    // the freshly-redeployed v1.1.0 controller UNregistered as a controller on
+    // the registrar + reverse registrars. Bumping the id re-runs the REG-13
+    // activation gate against the new controller address. (In-process tests use
+    // saveDeployments:false so they always re-run regardless; this bump fixes
+    // the real deploy:local / testnet path.) Writes are idempotent boolean
+    // sets, so a re-run is safe.
+    id: 'RiseRegistrarController:setup v1.1.0',
     tags: ['category:registrar-controller', 'RiseRegistrarController:setup'],
     dependencies: [
       'RiseRegistrarController:contract',
