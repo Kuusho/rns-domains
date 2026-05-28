@@ -777,4 +777,34 @@ describe('SubdomainRegistrar', () => {
       expect(decoded.args[0]).toBe('ReentrancyGuard: reentrant call')
     })
   })
+
+  describe('stats', () => {
+    it('increments totalSubdomains once per sale (ENUM-02)', async () => {
+      const { rns, subdomainRegistrar } = await loadFixture()
+      await configureSubdomain(subdomainRegistrar, rns, {
+        parentNode,
+        parentLabelHash,
+        payout: payout.address,
+        price: PRICE,
+        parentOwner,
+      })
+
+      // starts at 0 before any sale
+      await expect(subdomainRegistrar.read.totalSubdomains()).resolves.toBe(0n)
+
+      // one successful sale → 1
+      await subdomainRegistrar.write.register([parentNode, 'one', buyer.address], {
+        value: PRICE,
+        account: buyer,
+      })
+      await expect(subdomainRegistrar.read.totalSubdomains()).resolves.toBe(1n)
+
+      // a second successful sale (different label) → 2
+      await subdomainRegistrar.write.register([parentNode, 'two', buyer.address], {
+        value: PRICE,
+        account: buyer,
+      })
+      await expect(subdomainRegistrar.read.totalSubdomains()).resolves.toBe(2n)
+    })
+  })
 })

@@ -65,6 +65,12 @@ contract SubdomainRegistrar is ISubdomainRegistrar, Ownable, ReentrancyGuard {
     address public feeRecipient;   // owner-settable (D-07)
     uint256 public feeBps;         // owner-settable, <= FEE_CAP_BPS; default 0 (D-08)
 
+    /// @notice Lifetime count of subdomain sales through register (both
+    ///         overloads route through _register). ENUM-02 / D-03. This is a
+    ///         SALE count, never decremented — logical epoch invalidation does
+    ///         NOT touch it (A2: invalidation is logical, not physical).
+    uint256 public totalSubdomains;
+
     mapping(bytes32 => Config) public config;                            // parentNode => Config
     mapping(bytes32 => mapping(bytes32 => SubRecord)) public subRecords; // parentNode => labelHash => SubRecord
 
@@ -203,6 +209,7 @@ contract SubdomainRegistrar is ISubdomainRegistrar, Ownable, ReentrancyGuard {
 
         uint256 fee = c.price == 0 ? 0 : (uint256(c.price) * feeBps) / 10_000;   // feeBps <= FEE_CAP_BPS
         rns.setSubnodeRecord(parentNode, labelHash, to, defaultResolver, 0);   // operator-approval path (D-11/A3)
+        totalSubdomains++;                                                     // ENUM-02 / D-03 — sale count, in EFFECTS before _settle (CEI)
         emit SubdomainRegistered(parentNode, subnode, payer, to, uint256(c.price), fee, label);
 
         // ---- INTERACTIONS (independent; fee -> parent -> refund-to-payer) ----

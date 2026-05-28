@@ -21,7 +21,8 @@ export default deployScript(
     })
   },
   {
-    id: 'RiseRegistrar:contract v1.0.0',
+    // id bumped to v1.1.0 — RiseRegistrar storage layout shifted by ERC721Enumerable (Phase 8, Pitfall 3); enumeration is forward-only (no prior names — not on mainnet).
+    id: 'RiseRegistrar:contract v1.1.0',
     tags: ['category:riseregistrar', 'RiseRegistrar', 'RiseRegistrar:contract'],
     dependencies: ['RNSRegistry'],
   },
