@@ -6,6 +6,8 @@
   "private": true,
   "scripts": {
     "compile": "hardhat compile",
+    "format": "prettier --write \"contracts/**/*.sol\" \"{deploy,scripts,test}/**/*.ts\" \"frontend/generative/**/*.ts\"",
+    "format:check": "prettier --check \"contracts/**/*.sol\" \"{deploy,scripts,test}/**/*.ts\" \"frontend/generative/**/*.ts\"",
     "test": "bun run compile && NODE_OPTIONS=\"--disable-warning=ExperimentalWarning\" vitest run",
     "deploy:local": "hardhat deploy --network localhost --skip-prompts",
     "deploy:testnet": "hardhat deploy --network riseTestnet --skip-prompts",

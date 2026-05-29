@@ -1,50 +1,91 @@
-import { mkdirSync, writeFileSync } from 'node:fs';
-import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { renderAvatar, describe } from './src/avatar';
-import { renderOg, type OgState } from './src/og';
+import { mkdirSync, writeFileSync } from 'node:fs'
+import { join, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { renderAvatar, describe } from './src/avatar'
+import { renderOg, type OgState } from './src/og'
 
-const HERE = dirname(fileURLToPath(import.meta.url));
-const OUT = join(HERE, 'out');
+const HERE = dirname(fileURLToPath(import.meta.url))
+const OUT = join(HERE, 'out')
 
 // The 12 names from the brand deck (slide 08) so output diffs 1:1 against it.
 const NAMES = [
-  'alice.rise', 'max.rise', 'satoshi.rise', 'dao.rise', 'agent.rise', 'davit.rise',
-  'rise.rise', 'rns.rise', 'fork.rise', 'block.rise', 'commit.rise', 'reveal.rise',
-];
+  'alice.rise',
+  'max.rise',
+  'satoshi.rise',
+  'dao.rise',
+  'agent.rise',
+  'davit.rise',
+  'rise.rise',
+  'rns.rise',
+  'fork.rise',
+  'block.rise',
+  'commit.rise',
+  'reveal.rise',
+]
 
-mkdirSync(join(OUT, 'avatars'), { recursive: true });
-mkdirSync(join(OUT, 'og'), { recursive: true });
+mkdirSync(join(OUT, 'avatars'), { recursive: true })
+mkdirSync(join(OUT, 'og'), { recursive: true })
 
 // 1. Avatars
 for (const name of NAMES) {
-  writeFileSync(join(OUT, 'avatars', `${name}.svg`), renderAvatar(name));
+  writeFileSync(join(OUT, 'avatars', `${name}.svg`), renderAvatar(name))
 }
 
 // 2. OG cards — one of each state, plus a couple extras
 const ogJobs: Array<[string, OgState, Parameters<typeof renderOg>[2]]> = [
-  ['alice.rise', 'profile', { bio: 'Independent researcher, building the agentic web one quiet morning at a time.', block: '12,345,678', expires: '2027-05-27' }],
-  ['max.rise', 'available', { price: '0.005 ETH / year', tier: '5-character tier' }],
+  [
+    'alice.rise',
+    'profile',
+    {
+      bio: 'Independent researcher, building the agentic web one quiet morning at a time.',
+      block: '12,345,678',
+      expires: '2027-05-27',
+    },
+  ],
+  [
+    'max.rise',
+    'available',
+    { price: '0.005 ETH / year', tier: '5-character tier' },
+  ],
   ['satoshi.rise', 'reserved', {}],
-  ['agent.rise', 'profile', { bio: 'Autonomous trading agent. Resolves to a treasury, answers to no one.', block: '12,201,004', expires: '2028-01-14' }],
+  [
+    'agent.rise',
+    'profile',
+    {
+      bio: 'Autonomous trading agent. Resolves to a treasury, answers to no one.',
+      block: '12,201,004',
+      expires: '2028-01-14',
+    },
+  ],
   ['rise.rise', 'reserved', {}],
-];
+]
 for (const [name, state, opts] of ogJobs) {
-  writeFileSync(join(OUT, 'og', `${name}-${state}.svg`), renderOg(name, state, opts));
+  writeFileSync(
+    join(OUT, 'og', `${name}-${state}.svg`),
+    renderOg(name, state, opts),
+  )
 }
 
 // 3. Gallery viewer
-const avatarCards = NAMES.map((n) => `
+const avatarCards = NAMES.map(
+  (n) => `
   <figure class="a">
     <img src="avatars/${n}.svg" width="160" height="160" alt="${n}"/>
-    <figcaption><span class="nm">${n}</span><span class="ds">${describe(n)}</span></figcaption>
-  </figure>`).join('');
+    <figcaption><span class="nm">${n}</span><span class="ds">${describe(
+    n,
+  )}</span></figcaption>
+  </figure>`,
+).join('')
 
-const ogCards = ogJobs.map(([n, s]) => `
+const ogCards = ogJobs
+  .map(
+    ([n, s]) => `
   <figure class="o">
     <img src="og/${n}-${s}.svg" alt="${n} ${s}"/>
     <figcaption>${n} · <span class="st">${s.toUpperCase()}</span></figcaption>
-  </figure>`).join('');
+  </figure>`,
+  )
+  .join('')
 
 const html = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -66,17 +107,21 @@ const html = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/>
   .st{color:var(--amber)}
 </style></head><body>
   <h1>Every name has a <em>face</em> before it has a photo.</h1>
-  <p class="sub">deterministic from keccak256(namehash(name)) · ${NAMES.length} avatars · 3 OG states · rendered ${new Date().toISOString().slice(0, 10)}</p>
+  <p class="sub">deterministic from keccak256(namehash(name)) · ${
+    NAMES.length
+  } avatars · 3 OG states · rendered ${new Date()
+  .toISOString()
+  .slice(0, 10)}</p>
   <h2>Avatars (D-07)</h2>
   <div class="grid">${avatarCards}</div>
   <h2>Link previews (D-19) · 1200×630</h2>
   <div class="og">${ogCards}</div>
-</body></html>`;
+</body></html>`
 
-writeFileSync(join(OUT, 'index.html'), html);
+writeFileSync(join(OUT, 'index.html'), html)
 
-console.log(`✓ ${NAMES.length} avatars → ${join(OUT, 'avatars')}`);
-console.log(`✓ ${ogJobs.length} OG cards → ${join(OUT, 'og')}`);
-console.log(`✓ gallery → ${join(OUT, 'index.html')}`);
-console.log('\nParams per name:');
-for (const n of NAMES) console.log(`  ${n.padEnd(14)} ${describe(n)}`);
+console.log(`✓ ${NAMES.length} avatars → ${join(OUT, 'avatars')}`)
+console.log(`✓ ${ogJobs.length} OG cards → ${join(OUT, 'og')}`)
+console.log(`✓ gallery → ${join(OUT, 'index.html')}`)
+console.log('\nParams per name:')
+for (const n of NAMES) console.log(`  ${n.padEnd(14)} ${describe(n)}`)

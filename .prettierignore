@@ -1,0 +1,23 @@
+# Dependencies & build output
+node_modules
+artifacts
+cache
+build
+generated
+coverage
+
+# Read-only external reference (embedded .git)
+reference
+
+# Persisted rocketh deploy state (real-network JSON — never reformat)
+deployments
+
+# GSD planning docs (local-only)
+.planning
+
+# Generated generative-art output + hand-authored mockups
+frontend/generative/out
+frontend/mockups
+
+# Lockfiles
+bun.lock

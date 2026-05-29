@@ -437,6 +437,37 @@ Each transition is a visual state change, not a page navigation. The URL changes
 | F-29 | Allowlist root update | Owner-only | P0 |
 | F-30 | Price-tier display (read from oracle) | All users | P0 |
 
+### 5.5 v1.1 integration surface (shipped contracts — added 2026-05-29)
+
+> Added after Phases 7–8 shipped. These map to **deployed, tested** contracts. Full per-function
+> breakdown and copy-pasteable viem/wagmi recipes live in [`/IMPLEMENTATION.md`](../IMPLEMENTATION.md).
+
+| ID | Feature | Contract surface | Priority |
+|---|---|---|---|
+| F-31 | `/me` dashboard via on-chain enumeration | `RiseRegistrar.tokensOfOwner(address)` + `totalSupply()` — **no subgraph needed**. Cross-check `nameExpires(id)` for expired badges. | P0 |
+| F-32 | `/stats` page (single read) | `RiseStats.stats()` → `{registrations, renewals, totalSubdomains, cumulativeVolume, currentSupply}` | P1 |
+| F-33 | Multi-year registration (1–10 yr) | `register`/`renew` with `duration` in `[28 days, 10 years]`; quote via `rentPrice(label, duration)` | P0 |
+| F-34 | Tiered discount display | `RiseDurationPriceOracle.discountBps()` (`uint16[11]`, 1–10yr) + `MAX_DISCOUNT_BPS` (2000). Default 0/5/10/15/20%. Discount is already baked into `rentPrice`. | P1 |
+| F-35 | Subdomain marketplace — list (parent) | `RNSRegistry.setApprovalForAll(registrar, true)` → `SubdomainRegistrar.configure(parentNode, parentLabelHash, payout, price, enabled, gateToken, minGateBalance)`; `disable`, `revokeSubdomain` | P1 |
+| F-36 | Subdomain marketplace — buy | `SubdomainRegistrar.isSubnodeAvailable(...)` guard → `register(parentNode, label, to)` payable. Show split + gate + `isActive` liveness. Listen to `Subdomain*` events. | P1 |
+| F-37 | Subdomain admin (protocol) | `setFeeBps(bps ≤ FEE_CAP_BPS=1000)`, `setFeeRecipient` | P2 |
+| F-38 | ERC-7930 interop identity display | `RiseInteropResolver.interopAddress(node)` + `chainId()`. Handle `NoResolver`/`NoPrimaryAddress` reverts. The `.rise → account → ERC-8004` agent spine. | P1 |
+| F-39 | Generative avatar + OG (algorithm shipped) | `frontend/generative/` — `avatarParams(name)` from `keccak256(namehash(name))`. Port into an avatar component + `@vercel/og` route. Off-chain today (no on-chain `tokenURI`). | P1 |
+
+> **⚠ Corrections to the v1.0 inventory (verified against shipped code):**
+>
+> - **Allowlist is a per-address mapping, NOT merkle.** F-11, F-29, and §6.10 describe an
+>   "allowlistRoot + merkle proof." The shipped `RiseRegistrarController` uses
+>   `allowlisted[address] → bool` (owner-set via `setAllowlisted`) gated by `launchActive`, with a
+>   one-shot `endLaunch()`. The `/allowlist` verifier should read the mapping **directly** — no proof
+>   to deliver or submit. Update F-11 (surface → `allowlisted[addr]` + `launchActive`), F-29 (→
+>   `setAllowlisted(addr, bool)`), and §6.10 (drop the merkle-proof terminal output).
+> - **F-12 no longer needs a subgraph for ownership.** Owned-name lookups are now on-chain via
+>   `tokensOfOwner` (F-31). A light indexer remains useful only for the id→label map (token ids are
+>   `keccak256(label)` and not reversible on-chain) and live feeds.
+> - **F-24 / D-07 / D-19 generative algorithm is now concrete** and implemented in
+>   `frontend/generative/` (was "its own mini-design exercise" in §13.7). See F-39.
+
 ---
 
 ## 6. Screen specifications
@@ -1116,4 +1147,4 @@ Decision rule: pick the one that makes the *registration* moment feel most unfor
 
 ---
 
-*Last updated: 2026-05-27. Status: draft for review. After direction is chosen, this document is split into `BRAND.md` (foundations + voice + motion) and `FEATURES.md` (everything from §4 onward).*
+*Last updated: 2026-05-29 — added §5.5 (v1.1 integration surface: enumeration, stats, multi-year + discount, subdomain marketplace, ERC-7930 interop, generative avatars) mapped to the shipped Phase 7–8 contracts, plus corrections to F-11/F-12/F-29/§6.10 verified against the deployed code. See `/IMPLEMENTATION.md` for the function-level breakdown and viem/wagmi recipes. Prior: 2026-05-27, status: draft for review. After direction is chosen, this document is split into `BRAND.md` (foundations + voice + motion) and `FEATURES.md` (everything from §4 onward).*
